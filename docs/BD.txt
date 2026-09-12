@@ -1,0 +1,32 @@
+
+CREATE TABLE IF NOT EXISTS estacoes (
+    id SERIAL PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    latitude DECIMAL(10, 8) NOT NULL,
+    longitude DECIMAL(11, 8) NOT NULL,
+    status VARCHAR(20) DEFAULT 'Ativa',
+    criado TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS leituras (
+    id BIGSERIAL PRIMARY KEY,
+    estacao_id INT NOT NULL,
+    temperatura REAL,
+    umidade REAL,
+    pressao REAL,
+    luminosidade REAL,
+    qualidade_ar REAL,
+    pluviometria REAL,
+    data_hora TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_estacao FOREIGN KEY (estacao_id) REFERENCES estacoes(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS alertas (
+    id SERIAL PRIMARY KEY,
+    estacao_id INT NOT NULL,
+    tipo_alerta VARCHAR(50) NOT NULL,
+    mensagem TEXT NOT NULL,
+    nivel_critico VARCHAR(20) NOT NULL,
+    data_hora TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_estacao_alerta FOREIGN KEY (estacao_id) REFERENCES estacoes(id) ON DELETE CASCADE
+);
