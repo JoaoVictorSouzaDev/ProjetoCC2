@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Dashboards demonstrativos por localidade da Estação Ambiental IoT.">
+  <title>Dashboards — Estação Ambiental IoT</title>
+  <link rel="stylesheet" href="../CSS/painel.css">
+  <link rel="stylesheet" href="../CSS/dashboard.css">
+  <script type="module" src="../JAVA%20SCRIPT/dashboard.js"></script>
+</head>
+<body class="pagina-dashboard">
+  <a class="pular-conteudo" href="#conteudo-dashboard">Ir para o dashboard</a>
+  <header class="cabecalho">
+    <div class="barra-navegacao">
+      <a class="marca" href="index.html"><span class="marca-simbolo" aria-hidden="true">⌁</span>Estação Ambiental</a>
+      <nav aria-label="Navegação do dashboard">
+        <ul>
+          <li><a href="#dashboard" aria-current="location">Dashboard</a></li>
+          <li><a href="#historico">Histórico</a></li>
+          <li><a href="#estacao">Estação</a></li>
+          <li><a href="index.html#localidades">Locais</a></li>
+        </ul>
+      </nav>
+      <span class="selo">Dados demonstrativos</span>
+    </div>
+  </header>
+  <main id="conteudo-dashboard" class="container dashboard-container">
+    <div class="seletor-locais">
+      <span class="rotulo-locais" id="rotulo-locais">LOCALIDADE</span>
+      <div class="navegador-locais">
+        <button class="botao-contorno trocar-local" id="local-anterior" type="button"
+          aria-label="Localidade anterior" aria-controls="dashboard" disabled>‹</button>
+        <div class="abas-locais" role="tablist" aria-labelledby="rotulo-locais">
+          <button type="button" role="tab" id="aba-sao-paulo" data-local="sao-paulo" aria-controls="dashboard"
+            aria-selected="false" tabindex="-1" disabled>São Paulo</button>
+          <button type="button" role="tab" id="aba-campinas" data-local="campinas" aria-controls="dashboard"
+            aria-selected="false" tabindex="-1" disabled>Campinas</button>
+          <button type="button" role="tab" id="aba-sorocaba" data-local="sorocaba" aria-controls="dashboard"
+            aria-selected="true" tabindex="0" disabled>Sorocaba</button>
+          <button type="button" role="tab" id="aba-santos" data-local="santos" aria-controls="dashboard"
+            aria-selected="false" tabindex="-1" disabled>Santos</button>
+          <button type="button" role="tab" id="aba-curitiba" data-local="curitiba" aria-controls="dashboard"
+            aria-selected="false" tabindex="-1" disabled>Curitiba</button>
+        </div>
+        <button class="botao-contorno trocar-local" id="local-proximo" type="button"
+          aria-label="Próxima localidade" aria-controls="dashboard" disabled>›</button>
+      </div>
+    </div>
+    <p id="erro-dashboard" class="aviso" role="alert" hidden></p>
+    <noscript><p class="aviso">Ative o JavaScript para carregar os dashboards e selecionar uma localidade.</p></noscript>
+
+    <section id="dashboard" role="tabpanel" aria-labelledby="aba-sorocaba" tabindex="0">
+      <div class="cabecalho-dashboard">
+        <div>
+          <h1>Monitoramento Ambiental</h1>
+          <p><strong id="nome-local">Selecione uma localidade</strong><span id="condicao-local"></span></p>
+        </div>
+        <div class="atualizacao">
+          <div><span id="estado-local" class="selo">Demonstração</span>
+            <p>Última leitura fictícia: <time id="ultima-leitura">—</time></p></div>
+          <button id="recarregar" class="botao-contorno" type="button" disabled>
+            <span aria-hidden="true">↻</span> Atualizar exemplo
+          </button>
+        </div>
+      </div>
+
+      <section aria-labelledby="titulo-condicoes">
+        <div class="titulo-secao"><h2 id="titulo-condicoes">Condições da localidade</h2>
+          <p>Dados demonstrativos · sem conexão com sensores</p></div>
+        <dl class="indicadores indicadores-dashboard">
+          <div class="metrica">
+            <dt><span class="icone-metrica"><svg aria-hidden="true"><use href="../ASSETS/icones-dashboard.svg#temperature"></use></svg></span>Temperatura</dt>
+            <dd class="medida"><span id="metrica-temperatura">—</span> <span class="unidade">°C</span></dd>
+            <dd class="contexto-metrica" id="contexto-temperatura">Amostra demonstrativa</dd>
+          </div>
+          <div class="metrica">
+            <dt><span class="icone-metrica"><svg aria-hidden="true"><use href="../ASSETS/icones-dashboard.svg#humidity"></use></svg></span>Umidade relativa</dt>
+            <dd class="medida"><span id="metrica-umidade">—</span> <span class="unidade">%</span></dd>
+            <dd class="contexto-metrica" id="contexto-umidade">Amostra demonstrativa</dd>
+          </div>
+          <div class="metrica">
+            <dt><span class="icone-metrica"><svg aria-hidden="true"><use href="../ASSETS/icones-dashboard.svg#pressure"></use></svg></span>Pressão atmosférica</dt>
+            <dd class="medida"><span id="metrica-pressao">—</span> <span class="unidade">hPa</span></dd>
+            <dd class="contexto-metrica" id="contexto-pressao">Amostra demonstrativa</dd>
+          </div>
+          <div class="metrica">
+            <dt><span class="icone-metrica"><svg aria-hidden="true"><use href="../ASSETS/icones-dashboard.svg#air"></use></svg></span>Qualidade do ar · PM2,5</dt>
+            <dd class="medida"><span id="metrica-ar">—</span> <span class="unidade">µg/m³</span></dd>
+            <dd class="contexto-metrica" id="contexto-ar">Amostra demonstrativa</dd>
+          </div>
+          <div class="metrica">
+            <dt><span class="icone-metrica"><svg aria-hidden="true"><use href="../ASSETS/icones-dashboard.svg#light"></use></svg></span>Luminosidade</dt>
+            <dd class="medida"><span id="metrica-luminosidade">—</span> <span class="unidade">lx</span></dd>
+            <dd class="contexto-metrica" id="contexto-luminosidade">Amostra demonstrativa</dd>
+          </div>
+          <div class="metrica">
+            <dt><span class="icone-metrica"><svg aria-hidden="true"><use href="../ASSETS/icones-dashboard.svg#sound"></use></svg></span>Nível de ruído</dt>
+            <dd class="medida"><span id="metrica-ruido">—</span> <span class="unidade">dB(A)</span></dd>
+            <dd class="contexto-metrica" id="contexto-ruido">Amostra demonstrativa</dd>
+          </div>
+        </dl>
+      </section>
+
+      <section id="historico" aria-labelledby="titulo-analises">
+        <div class="titulo-secao"><h2 id="titulo-analises">Tendência e interpretação</h2>
+          <p>Explore a evolução das amostras de exemplo</p></div>
+        <div class="grade-apoio grade-dashboard">
+          <section class="painel-apoio painel-grafico" aria-labelledby="titulo-grafico">
+            <div class="cabecalho-grafico">
+              <div><h3 id="titulo-grafico">Temperatura — últimas 24 horas</h3>
+                <p id="subtitulo-grafico">Histórico demonstrativo</p></div>
+              <div class="periodos" role="group" aria-label="Período do gráfico">
+                <button type="button" data-periodo="24h" aria-pressed="true" aria-controls="grafico" disabled>24 horas</button>
+                <button type="button" data-periodo="7d" aria-pressed="false" aria-controls="grafico" disabled>7 dias</button>
+                <button type="button" data-periodo="30d" aria-pressed="false" aria-controls="grafico" disabled>30 dias</button>
+              </div>
+            </div>
+            <output id="leitura-grafico" class="leitura-grafico">Selecione um ponto para consultar a amostra.</output>
+            <svg id="grafico" viewBox="0 0 800 280" role="group" aria-label="Gráfico de temperatura demonstrativa"></svg>
+            <p id="resumo-grafico" class="resumo-grafico"></p>
+            <details class="dados-grafico">
+              <summary>Consultar dados do gráfico em tabela</summary>
+              <div class="rolagem-tabela" tabindex="0" role="region" aria-label="Dados do gráfico">
+                <table><caption id="legenda-serie">Amostras demonstrativas</caption>
+                  <thead><tr><th scope="col">Data e hora (UTC−03)</th><th scope="col">Temperatura</th></tr></thead>
+                  <tbody id="tabela-serie"></tbody>
+                </table>
+              </div>
+            </details>
+          </section>
+          <aside class="painel-apoio resumo-dashboard" aria-labelledby="titulo-resumo">
+            <h3 id="titulo-resumo">Resumo ambiental</h3>
+            <div class="destaque-resumo"><strong id="resumo-condicao">Cenário demonstrativo</strong>
+              <p id="resumo-texto">Selecione uma localidade para consultar seu cenário.</p></div>
+            <dl class="ficha-projeto">
+              <div><dt>Temperatura mínima</dt><dd id="resumo-minima">—</dd></div>
+              <div><dt>Temperatura máxima</dt><dd id="resumo-maxima">—</dd></div>
+              <div><dt>Umidade da última amostra</dt><dd id="resumo-umidade">—</dd></div>
+              <div><dt>Ruído da última amostra</dt><dd id="resumo-ruido">—</dd></div>
+            </dl>
+            <p class="nota-resumo">Não constitui avaliação de risco ambiental. Todos os valores são fictícios.</p>
+          </aside>
+        </div>
+      </section>
+
+      <section id="medicoes" aria-labelledby="titulo-medicoes">
+        <div class="titulo-secao"><h2 id="titulo-medicoes">Últimas medições</h2><p>Amostras de exemplo a cada 3 horas</p></div>
+        <div class="grade-apoio grade-dashboard">
+          <div class="painel-apoio painel-tabela">
+            <div class="rolagem-tabela" tabindex="0" role="region" aria-label="Últimas medições da localidade">
+              <table>
+                <caption id="legenda-medicoes">Registros demonstrativos</caption>
+                <thead><tr><th scope="col">Horário</th><th scope="col">Temperatura</th>
+                  <th scope="col">Umidade</th><th scope="col">Pressão</th><th scope="col">PM2,5</th></tr></thead>
+                <tbody id="registros-medicoes"></tbody>
+              </table>
+            </div>
+            <button id="expandir-medicoes" class="link-destaque" type="button" aria-expanded="false"
+              aria-controls="registros-medicoes" disabled>Ver todas as amostras →</button>
+          </div>
+          <section id="estacao" class="painel-apoio" aria-labelledby="titulo-estacao">
+            <h3 id="titulo-estacao">Sobre esta estação</h3>
+            <dl class="ficha-projeto">
+              <div><dt>Localidade</dt><dd id="estacao-local">—</dd></div>
+              <div><dt>Estado simulado</dt><dd id="estacao-estado">—</dd></div>
+              <div><dt>Última leitura fictícia</dt><dd id="estacao-horario">—</dd></div>
+              <div><dt>Intervalo previsto</dt><dd id="estacao-intervalo">—</dd></div>
+              <div><dt>Sensores previstos</dt><dd id="estacao-sensores">—</dd></div>
+              <div><dt>Dispositivo de exemplo</dt><dd id="estacao-dispositivo">—</dd></div>
+            </dl>
+          </section>
+        </div>
+      </section>
+      <p class="aviso aviso-dashboard"><strong>Dados que viram informação útil.</strong>
+        Demonstração acadêmica com conjuntos independentes por localidade. Não há sensores ou API conectados.</p>
+    </section>
+    <p class="sr-only" id="anuncio-dashboard" role="status" aria-atomic="true"></p>
+  </main>
+  <footer class="rodape"><div class="container">
+    <p>Estação Ambiental IoT — Projeto acadêmico</p><a href="index.html#localidades">Escolher outro local →</a>
+  </div></footer>
+</body>
+</html>
