@@ -12,15 +12,11 @@
   <a class="pular-conteudo" href="#conteudo-principal">Ir para o conteúdo principal</a>
   <header class="cabecalho">
     <div class="barra-navegacao">
-      <a class="marca" href="#apresentacao"><span class="marca-simbolo" aria-hidden="true">⌁</span>
-        Estação Ambiental<span class="sr-only"> IoT</span></a>
+      <a class="marca" href="#apresentacao" aria-label="AERIS — Estação Ambiental IoT">AERIS</a>
       <nav aria-label="Navegação principal">
         <ul>
           <li><a href="#localidades" aria-current="location">Locais</a></li>
           <li><a id="link-dashboard" href="dashboard.html?local=sorocaba">Dashboard</a></li>
-          <li><a href="#historico">Histórico</a></li>
-          <li><a href="#localizacao">Localização</a></li>
-          <li><a href="#projeto">Sobre</a></li>
         </ul>
       </nav>
       <span class="selo">Demonstrativo</span>
@@ -211,79 +207,10 @@
           Nenhum valor é uma leitura real de sensores.
         </p>
         <p id="anuncio-localidade" class="sr-only" role="status" aria-atomic="true"></p>
-        <noscript><p class="aviso">Ative o JavaScript para selecionar localidades. O painel abaixo mostra Sorocaba.</p></noscript>
+        <noscript><p class="aviso">Ative o JavaScript para selecionar localidades e acessar os dashboards de cada cidade.</p></noscript>
       </section>
     </div>
 
-    <div class="area-dashboard">
-      <div class="container">
-        <section id="painel" aria-labelledby="titulo-painel">
-          <div class="titulo-painel">
-            <div>
-              <p class="sobretitulo">MONITORAMENTO AMBIENTAL</p>
-              <h2 id="titulo-painel" tabindex="-1">Sorocaba — SP</h2>
-              <p id="condicao-painel">Ensolarado · Dados demonstrativos</p>
-            </div>
-            <div class="estado-estacao">
-              <span class="selo">Sem conexão com sensores</span>
-              <p>Horário de exemplo: <time datetime="2026-09-25T14:30:00-03:00">25/09/2026, 14h30 (UTC−03:00)</time></p>
-            </div>
-          </div>
-          <div class="titulo-secao"><h3>Indicadores ambientais</h3><p>Valores fictícios para fins educacionais</p></div>
-          <dl class="indicadores">
-            <div><dt>Temperatura do ar</dt><dd id="valor-temperatura">26 °C</dd><dd class="nota">Graus Celsius</dd></div>
-            <div><dt>Umidade relativa</dt><dd id="valor-umidade">54 %</dd><dd class="nota">Umidade do ar</dd></div>
-            <div><dt>Pressão atmosférica</dt><dd id="valor-pressao">1.012 hPa</dd><dd class="nota">Hectopascais</dd></div>
-            <div><dt>Qualidade do ar · PM2,5</dt><dd id="valor-ar">12 µg/m³</dd>
-              <dd class="nota">Concentração fictícia, sem classificação de risco</dd></div>
-            <div><dt>Luminosidade</dt><dd id="valor-luminosidade">420 lx</dd><dd class="nota">Lux</dd></div>
-            <div><dt>Nível de ruído</dt><dd id="valor-ruido">48 dB(A)</dd><dd class="nota">Decibéis com ponderação A</dd></div>
-          </dl>
-        </section>
-
-        <section id="historico" aria-labelledby="titulo-historico">
-          <div class="titulo-secao"><h2 id="titulo-historico">Tendência e histórico</h2><p>Medições ao longo do tempo</p></div>
-          <div class="grade-apoio">
-            <section class="painel-apoio reserva" aria-labelledby="titulo-grafico">
-              <h3 id="titulo-grafico">Temperatura e umidade — histórico</h3>
-              <div class="reserva-conteudo">
-                <span class="selo neutro">Em uma próxima etapa</span>
-                <p>Nenhum histórico de medições disponível.</p>
-                <p>Espaço reservado para gráficos. Ainda não há séries de dados armazenadas.</p>
-              </div>
-            </section>
-            <aside class="painel-apoio" aria-labelledby="titulo-resumo">
-              <h3 id="titulo-resumo">Resumo da localidade</h3>
-              <p class="destaque-resumo" id="resumo-localidade">Sorocaba: ensolarado, 26 °C e umidade de 54 %.</p>
-              <p>Os valores são fixos e demonstrativos; não representam uma avaliação ambiental real.</p>
-              <a class="link-destaque" href="#projeto">Conheça o projeto →</a>
-            </aside>
-          </div>
-        </section>
-
-        <div class="grade-apoio secoes-finais">
-          <section id="localizacao" class="painel-apoio reserva" aria-labelledby="titulo-localizacao">
-            <h2 id="titulo-localizacao">Localização da estação</h2>
-            <p id="localizacao-selecionada">Localidade demonstrativa: Sorocaba — SP.</p>
-            <div class="reserva-conteudo">
-              <span class="selo neutro">Mapa ainda não implementado</span>
-              <p>Nenhum endereço ou coordenada real foi cadastrado.</p>
-            </div>
-          </section>
-          <section id="projeto" class="painel-apoio" aria-labelledby="titulo-projeto">
-            <h2 id="titulo-projeto">Sobre esta estação</h2>
-            <p>Estação portátil baseada em Arduino ou ESP32 para estudar o ambiente e apresentar medições na web.</p>
-            <dl class="ficha-projeto">
-              <div><dt>Projeto</dt><dd>Estação Ambiental IoT</dd></div>
-              <div><dt>Finalidade</dt><dd>Acadêmica</dd></div>
-              <div><dt>Etapa</dt><dd>Interface demonstrativa</dd></div>
-              <div><dt>Dispositivo previsto</dt><dd>ESP32 / Arduino</dd></div>
-            </dl>
-            <p>Integração com sensores e dados em tempo real não fazem parte desta etapa.</p>
-          </section>
-        </div>
-      </div>
-    </div>
   </main>
   <footer class="rodape"><div class="container">
     <p>Estação Ambiental IoT <span>— Projeto acadêmico</span></p>

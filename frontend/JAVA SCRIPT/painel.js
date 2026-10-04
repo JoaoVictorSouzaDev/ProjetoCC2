@@ -1,4 +1,4 @@
-import { localidades, formatarIndicadores, filtrarLocalidades } from './dados-demonstrativos.js';
+import { localidades, filtrarLocalidades } from './dados-demonstrativos.js';
 
 const dashboardPorLocal = Object.freeze({
   'sao-paulo': 'dashboard.html?local=sao-paulo',
@@ -24,15 +24,9 @@ function escrever(id, texto) {
   document.getElementById(id).textContent = texto;
 }
 
-function atualizarPainel(local) {
+function atualizarLocalidade(local) {
   document.getElementById('link-dashboard').href = dashboardPorLocal[local.id];
-  escrever('titulo-painel', `${local.nome} — ${local.uf}`);
-  escrever('condicao-painel', `${local.condicao} · Dados demonstrativos`);
-  escrever('localizacao-selecionada', `Localidade demonstrativa: ${local.nome} — ${local.uf}.`);
-  escrever('resumo-localidade', `${local.nome}: ${local.condicao.toLowerCase()}, ` +
-    `${local.temperatura} °C e umidade de ${local.umidade} %.`);
-  for (const [campo, valor] of Object.entries(formatarIndicadores(local))) escrever(`valor-${campo}`, valor);
-  escrever('anuncio-localidade', `${local.nome} selecionada. Painel atualizado com dados demonstrativos.`);
+  escrever('anuncio-localidade', `${local.nome} selecionada. Dados demonstrativos.`);
 }
 
 function atualizarCartoes() {
@@ -101,7 +95,7 @@ function selecionar(id) {
   const local = disponiveis.find(item => item.id === id);
   if (!local) return;
   selecionada = id;
-  atualizarPainel(local);
+  atualizarLocalidade(local);
   atualizarCartoes();
   atualizarSetas();
   centralizar();
@@ -120,7 +114,7 @@ function criarPaginacao() {
     botao.type = 'button';
     botao.dataset.selecionar = local.id;
     botao.setAttribute('aria-label', `Selecionar ${local.nome}`);
-    botao.setAttribute('aria-controls', 'painel lista-localidades');
+    botao.setAttribute('aria-controls', 'lista-localidades');
     botao.setAttribute('aria-pressed', String(local.id === selecionada));
     return botao;
   }));
@@ -178,7 +172,7 @@ function filtrar() {
   });
   criarPaginacao();
   escrever('contagem-localidades', `${disponiveis.length} localidades demonstrativas`);
-  escrever('resultado-busca', disponiveis.length ? '' : 'Nenhuma cidade encontrada. O painel mantém a última seleção.');
+  escrever('resultado-busca', disponiveis.length ? '' : 'Nenhuma cidade encontrada. Tente buscar outra localidade.');
   if (!disponiveis.some(local => local.id === selecionada)) selecionar(disponiveis[0]?.id);
   atualizarCartoes();
   atualizarSetas();
@@ -280,7 +274,7 @@ function conectarControles() {
 function iniciar() {
   document.querySelectorAll('[data-selecionar], #busca').forEach(item => { item.disabled = false; });
   criarPaginacao();
-  atualizarPainel(localidades.find(local => local.id === selecionada));
+  atualizarLocalidade(localidades.find(local => local.id === selecionada));
   atualizarSetas();
   atualizarCartoes();
   conectarControles();

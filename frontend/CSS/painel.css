@@ -1,6 +1,9 @@
 :root {
   color-scheme: dark;
   --fundo: #08111f;
+  --gradiente-pagina: linear-gradient(180deg, #0f1c2e 0%, var(--fundo) 100%);
+  --brilho-pagina: radial-gradient(ellipse at center,
+    rgb(45 212 191 / 13%), rgb(15 34 52 / 7%) 45%, transparent 72%);
   --superficie: #101c2e;
   --cartao: #17273b;
   --borda: #283a51;
@@ -18,12 +21,8 @@
 
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; scroll-padding-top: 24px; }
-body { margin: 0; background: var(--fundo); color: var(--texto); font: 16px/1.5 var(--fonte); }
-.pagina-index {
-  min-height: 100vh;
-  background: linear-gradient(180deg, #0f1c2e 0%, var(--fundo) 100%);
-  background-attachment: fixed;
-}
+body { margin: 0; min-height: 100vh; color: var(--texto); font: 16px/1.5 var(--fonte);
+  background-color: var(--fundo); background-image: var(--gradiente-pagina); background-attachment: fixed; }
 a { color: inherit; text-decoration: none; }
 button, input { font: inherit; }
 button, a, input { -webkit-tap-highlight-color: transparent; }
@@ -46,9 +45,9 @@ p { color: var(--secundario); }
 .cabecalho { background: var(--superficie); border-bottom: 1px solid var(--borda); }
 .barra-navegacao { max-width: 1440px; min-height: 72px; padding: 12px var(--margem); margin: auto;
   display: flex; align-items: center; gap: 28px; }
-.marca { display: flex; align-items: center; gap: 10px; font-size: 16px; font-weight: 650; white-space: nowrap; }
-.marca-simbolo { display: grid; place-items: center; width: 36px; height: 36px; background: var(--destaque);
-  color: #073339; border-radius: 10px; font-size: 27px; }
+.marca { display: inline-flex; align-items: center; flex-shrink: 0; min-height: 44px;
+  color: var(--destaque); font-size: 28px; line-height: 1; font-weight: 750; letter-spacing: .14em;
+  white-space: nowrap; }
 nav { margin-left: auto; }
 nav ul { display: flex; gap: 28px; align-items: center; list-style: none; margin: 0; padding: 0; }
 nav a { display: block; padding: 8px 10px; color: var(--secundario); border-radius: 8px; font-size: 14px; }
@@ -71,7 +70,7 @@ nav a:hover, nav a[aria-current] { background: var(--destaque-escuro); color: va
   position: absolute;
   inset: -12% 0;
   pointer-events: none;
-  background: radial-gradient(ellipse at center, rgb(45 212 191 / 13%), rgb(15 34 52 / 7%) 45%, transparent 72%);
+  background: var(--brilho-pagina);
 }
 .lista-localidades { position: relative; display: flex; align-items: center; gap: 24px; margin: 0;
   padding: 32px 0; list-style: none; min-height: 536px; overflow-x: auto; overflow-y: hidden;
@@ -142,29 +141,17 @@ nav a:hover, nav a[aria-current] { background: var(--destaque-escuro); color: va
 .aviso strong { color: var(--texto); }
 .mensagem-busca:empty { display: none; }
 .mensagem-busca { text-align: center; margin-top: 12px; }
-.area-dashboard { background: var(--superficie); border-top: 1px solid var(--borda); padding-block: 48px; }
-.titulo-painel { display: flex; align-items: center; justify-content: space-between; gap: 24px; margin-bottom: 40px; }
-.titulo-painel h2 { font-size: 32px; margin-block: 8px; }
-.sobretitulo { font-size: 11px; letter-spacing: 1.5px; color: var(--destaque); }
-.estado-estacao { text-align: right; }
-.estado-estacao p { font-size: 12px; margin-top: 10px; }
 .indicadores { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
 .indicadores > div { border: 1px solid var(--borda); border-radius: var(--raio); padding: 24px; min-height: 170px; }
 .indicadores dt { font-size: 14px; color: var(--secundario); margin-bottom: 16px; }
 .indicadores dd { font-size: 30px; font-weight: 600; }
-.indicadores .nota { color: var(--secundario); font-size: 12px; font-weight: 400; margin-top: 12px; }
 #historico { margin-top: 40px; }
 .grade-apoio { display: grid; grid-template-columns: 2fr 1fr; gap: 24px; }
 .painel-apoio { border: 1px solid var(--borda); border-radius: var(--raio); padding: 24px; }
 .painel-apoio h2, .painel-apoio h3 { font-size: 18px; }
 .painel-apoio p { font-size: 14px; margin-top: 16px; }
-.reserva { min-height: 290px; }
-.reserva-conteudo { min-height: 180px; display: flex; flex-direction: column; align-items: center;
-  justify-content: center; text-align: center; padding: 24px 0; }
-.neutro { color: var(--secundario); background: var(--fundo); }
 .destaque-resumo { background: var(--destaque-escuro); padding: 16px; border-radius: 8px; color: #b5ebe2; }
 .link-destaque { color: var(--destaque); display: inline-block; margin-top: 24px; font-size: 14px; }
-.secoes-finais { margin-top: 24px; }
 .ficha-projeto { font-size: 12px; margin-top: 20px; }
 .ficha-projeto > div { display: flex; justify-content: space-between; gap: 16px; margin-top: 10px; }
 .ficha-projeto dt { color: var(--secundario); }
@@ -189,7 +176,7 @@ nav a:hover, nav a[aria-current] { background: var(--destaque-escuro); color: va
   nav ul { justify-content: space-between; gap: 4px; }
   nav a { padding: 8px 6px; font-size: 12px; }
   .pagina-locais { padding-top: 32px; }
-  .apresentacao, .titulo-painel { flex-direction: column; align-items: stretch; }
+  .apresentacao { flex-direction: column; align-items: stretch; }
   .apresentacao { gap: 20px; }
   #busca-localidades { flex: auto; }
   h1 { font-size: 28px; }
@@ -205,9 +192,6 @@ nav a:hover, nav a[aria-current] { background: var(--destaque-escuro); color: va
   .seta { width: 40px; height: 40px; }
   .anterior { left: -10px; }
   .proxima { right: -10px; }
-  .area-dashboard { padding-block: 32px; }
-  .estado-estacao { text-align: left; }
-  .titulo-painel h2 { font-size: 28px; }
   .indicadores { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
   .indicadores > div { padding: 16px; }
   .indicadores dd { font-size: 24px; }
@@ -216,7 +200,7 @@ nav a:hover, nav a[aria-current] { background: var(--destaque-escuro); color: va
 }
 @media (max-width: 360px) {
   .indicadores { grid-template-columns: 1fr; }
-  .marca { font-size: 15px; }
+  .marca { font-size: 24px; }
 }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }

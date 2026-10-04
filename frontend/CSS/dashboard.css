@@ -9,10 +9,11 @@
 .pagina-dashboard {
   --texto: #eaf2fa;
   --intervalo-dashboard: 28px;
-  background: var(--superficie);
   font-feature-settings: 'tnum' 1;
 }
-.dashboard-container { padding-top: 42px; padding-bottom: 56px; }
+.dashboard-container { padding-top: 42px; padding-bottom: 56px;
+  background-image: var(--brilho-pagina); background-repeat: no-repeat;
+  background-size: 100% 660px; background-position: center 42px; }
 .pagina-dashboard h1 { font-size: 36px; font-weight: 600; line-height: 52px; letter-spacing: 0; }
 .pagina-dashboard h2 { font-size: 22px; font-weight: 600; }
 .pagina-dashboard h3 { font-weight: 600; }
