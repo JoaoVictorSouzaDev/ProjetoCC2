@@ -19,6 +19,11 @@
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; scroll-padding-top: 24px; }
 body { margin: 0; background: var(--fundo); color: var(--texto); font: 16px/1.5 var(--fonte); }
+.pagina-index {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #0f1c2e 0%, var(--fundo) 100%);
+  background-attachment: fixed;
+}
 a { color: inherit; text-decoration: none; }
 button, input { font: inherit; }
 button, a, input { -webkit-tap-highlight-color: transparent; }
@@ -60,47 +65,66 @@ nav a:hover, nav a[aria-current] { background: var(--destaque-escuro); color: va
 .titulo-secao { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-bottom: 24px; }
 .titulo-secao p { font-size: 12px; }
 #localidades { margin-top: 70px; }
-.carrossel { position: relative; container-type: inline-size; }
+.carrossel { position: relative; container-type: inline-size; max-width: 1000px; margin-inline: auto; }
+.pagina-index .carrossel::before {
+  content: "";
+  position: absolute;
+  inset: -12% 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, rgb(45 212 191 / 13%), rgb(15 34 52 / 7%) 45%, transparent 72%);
+}
 .lista-localidades { position: relative; display: flex; align-items: center; gap: 24px; margin: 0;
   padding: 32px 0; list-style: none; min-height: 536px; overflow-x: auto; overflow-y: hidden;
   overscroll-behavior-x: contain; scrollbar-width: none; overflow-anchor: none;
   scroll-behavior: auto; touch-action: pan-y; cursor: grab; }
 .lista-localidades::-webkit-scrollbar { display: none; }
 .lista-localidades.arrastando { cursor: grabbing; user-select: none; }
-.localidade { flex: 0 0 280px; min-height: 380px; border: 1px solid var(--borda); border-radius: 22px;
-  background: var(--cartao); overflow: hidden; opacity: .75;
-  transition: flex-basis 320ms ease, min-height 320ms ease, opacity 320ms ease, border-color 320ms ease; }
-.localidade.selecionada { flex-basis: 420px; min-height: 460px; opacity: 1; border-color: var(--destaque);
+.localidade { flex: 0 0 380px; min-width: 0; }
+.localidade article {
+  display: flex; flex-direction: column; min-height: 470px; width: 100%;
+  border: 1px solid var(--borda); border-radius: 22px; background: var(--cartao);
+  transform: scale(.92); opacity: .75;
+  transition: transform 320ms ease, opacity 320ms ease, border-color 320ms ease;
+}
+.localidade.selecionada article { transform: scale(1); opacity: 1; border-color: var(--destaque);
   box-shadow: inset 0 0 0 1px var(--destaque); }
 .localidade article[role="link"] { cursor: pointer; }
-.localidade article:focus-visible { outline-offset: -4px; border-radius: 21px; }
-.localidade:focus-within, .localidade:hover { opacity: 1; }
-.clima { height: 170px; display: flex; flex-direction: column; align-items: center; justify-content: center;
-  background: linear-gradient(105deg, #113751, #08111f); transition: height 320ms ease; }
+.localidade article:focus-visible { outline-offset: 3px; }
+.localidade:focus-within article, .localidade:hover article { opacity: 1; }
+.clima {
+  position: relative; isolation: isolate; overflow: hidden; border-radius: 21px 21px 0 0;
+  display: flex; flex-direction: column; justify-content: space-between; gap: 16px;
+  min-height: 300px; padding: 20px 24px; background: linear-gradient(105deg, #113751, #08111f);
+}
 .clima.sun { background: linear-gradient(105deg, #096474, #08111f); }
 .clima.rain { background: linear-gradient(105deg, #102f4e, #08111f); }
 .clima.cloud { background: linear-gradient(105deg, #15334b, #08111f); }
-.selecionada .clima { height: 230px; }
-.icone-clima { font: 48px/1.2 "Segoe UI Symbol", sans-serif; color: #b9c9d5; transition: font-size 320ms ease; }
+.clima .foto-localidade { position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%;
+  object-fit: cover; object-position: center; pointer-events: none; }
+.clima::after { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: linear-gradient(180deg, rgb(8 17 31 / 48%), rgb(8 17 31 / 60%) 55%, rgb(8 17 31 / 92%)); }
+[data-localidade="sao-paulo"] .foto-localidade { object-position: center 65%; }
+[data-localidade="santos"] .foto-localidade { object-position: center 75%; }
+[data-localidade="curitiba"] .foto-localidade { object-position: center 60%; }
+.condicoes-cartao { display: flex; flex-direction: column; align-items: center; gap: 6px;
+  text-align: center; text-shadow: 0 2px 8px #08111f; }
+.icone-clima { font: 48px/1.2 "Segoe UI Symbol", sans-serif; color: #b9c9d5; }
 .sun .icone-clima { color: #ffcf18; }
 .rain .icone-clima { color: #b76fe8; }
-.selecionada .icone-clima { font-size: 72px; }
-.temperatura-cartao { font-size: 42px; line-height: 1.2; font-weight: 700; color: var(--texto); margin-block: 10px;
-  transition: font-size 320ms ease; }
+.temperatura-cartao { font-size: 48px; line-height: 1.2; font-weight: 700; color: var(--texto); }
 .temperatura-cartao span { font-size: .45em; font-weight: 500; }
-.selecionada .temperatura-cartao { font-size: 56px; }
-.clima > p:last-child { font-size: 13px; }
-.detalhes-localidade { padding: 18px; transition: padding 320ms ease; }
-.selecionada .detalhes-localidade { padding: 20px 24px; }
-.detalhes-localidade h3 { font-size: 18px; transition: font-size 320ms ease; }
-.selecionada h3 { font-size: 24px; }
-.estado { font-size: 12px; margin-top: 2px; }
-.resumo-localidade { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 18px; }
-.resumo-localidade div { background: #0b1727; border-radius: 8px; padding: 8px 10px; }
+.condicoes-cartao > p:last-child { font-size: 13px; color: var(--texto); }
+.identificacao-localidade { text-shadow: 0 2px 8px #08111f; }
+.identificacao-localidade h3 { font-size: 24px; }
+.estado { font-size: 12px; margin-top: 2px; color: var(--texto); }
+.detalhes-localidade { display: flex; flex: 1; flex-direction: column; gap: 16px; padding: 20px 24px 24px; }
+.resumo-localidade { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.resumo-localidade div { min-width: 0; background: #0b1727; border-radius: 8px; padding: 8px 10px; }
 .resumo-localidade dt { font-size: 11px; color: var(--secundario); }
 .resumo-localidade dd { font-size: 14px; }
-.selecionar { position: relative; display: block; width: 100%; border: 1px solid var(--borda); border-radius: 8px;
-  background: var(--superficie); padding: 8px; font-size: 12px; margin-top: 12px; }
+.selecionar { display: flex; align-items: center; justify-content: center; gap: 4px; width: 100%; min-height: 44px;
+  border: 1px solid var(--borda); border-radius: 8px; background: var(--superficie);
+  padding: 8px; font-size: 12px; margin-top: auto; }
 .selecionada .selecionar { background: var(--destaque); color: #052929; border-color: var(--destaque); font-weight: 650; }
 .selecionar:hover { border-color: var(--destaque); }
 .lista-localidades.sem-transicao, .lista-localidades.sem-transicao * { transition: none; }
@@ -173,11 +197,11 @@ nav a:hover, nav a[aria-current] { background: var(--destaque-escuro); color: va
   .titulo-secao { flex-wrap: wrap; gap: 8px; }
   .titulo-secao h2 { font-size: 18px; }
   .lista-localidades { min-height: 462px; padding-block: 16px; gap: 12px; }
-  .localidade { flex-basis: min(280px, 70cqw); }
-  .localidade.selecionada { flex-basis: min(320px, 80cqw); min-height: 430px; }
-  .selecionada .clima { height: 204px; }
-  .selecionada .detalhes-localidade { padding: 16px; }
-  .selecionada h3 { font-size: 22px; }
+  .localidade { flex-basis: min(360px, 80cqw); }
+  .localidade article { min-height: 440px; }
+  .clima { min-height: 280px; padding: 16px; }
+  .detalhes-localidade { padding: 16px; }
+  .identificacao-localidade h3 { font-size: 22px; }
   .seta { width: 40px; height: 40px; }
   .anterior { left: -10px; }
   .proxima { right: -10px; }

@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="../CSS/painel.css">
   <script type="module" src="../JAVA%20SCRIPT/painel.js"></script>
 </head>
-<body>
+<body class="pagina-index">
   <a class="pular-conteudo" href="#conteudo-principal">Ir para o conteúdo principal</a>
   <header class="cabecalho">
     <div class="barra-navegacao">
@@ -54,13 +54,20 @@
             <article data-dashboard="sao-paulo" tabindex="0" role="link"
               aria-label="Abrir dashboard climático de São Paulo">
               <div class="clima cloud">
-                <span class="icone-clima" aria-hidden="true">◒</span>
-                <p class="temperatura-cartao">23<span> °C</span></p>
-                <p>Parcialmente nublado</p>
+                <img class="foto-localidade" src="../ASSETS/images/locations/sao-paulo.webp"
+                  alt="Paisagem de São Paulo — fotografia fornecida para o projeto"
+                  width="720" height="960" loading="lazy" decoding="async" draggable="false">
+                <div class="condicoes-cartao">
+                  <span class="icone-clima" aria-hidden="true">◒</span>
+                  <p class="temperatura-cartao">23<span> °C</span></p>
+                  <p>Parcialmente nublado</p>
+                </div>
+                <div class="identificacao-localidade">
+                  <h3 id="titulo-sao-paulo">São Paulo</h3>
+                  <p class="estado">SP</p>
+                </div>
               </div>
               <div class="detalhes-localidade">
-                <h3 id="titulo-sao-paulo">São Paulo</h3>
-                <p class="estado">SP</p>
                 <dl class="resumo-localidade">
                   <div><dt>Umidade</dt><dd>64 %</dd></div>
                   <div><dt>Vento</dt><dd>11 km/h</dd></div>
@@ -77,13 +84,20 @@
             <article data-dashboard="campinas" tabindex="0" role="link"
               aria-label="Abrir dashboard climático de Campinas">
               <div class="clima cloud">
-                <span class="icone-clima" aria-hidden="true">◒</span>
-                <p class="temperatura-cartao">25<span> °C</span></p>
-                <p>Parcialmente nublado</p>
+                <img class="foto-localidade" src="../ASSETS/images/locations/campinas.webp"
+                  alt="Paisagem de Campinas — fotografia fornecida para o projeto"
+                  width="960" height="540" loading="lazy" decoding="async" draggable="false">
+                <div class="condicoes-cartao">
+                  <span class="icone-clima" aria-hidden="true">◒</span>
+                  <p class="temperatura-cartao">25<span> °C</span></p>
+                  <p>Parcialmente nublado</p>
+                </div>
+                <div class="identificacao-localidade">
+                  <h3 id="titulo-campinas">Campinas</h3>
+                  <p class="estado">SP</p>
+                </div>
               </div>
               <div class="detalhes-localidade">
-                <h3 id="titulo-campinas">Campinas</h3>
-                <p class="estado">SP</p>
                 <dl class="resumo-localidade">
                   <div><dt>Umidade</dt><dd>59 %</dd></div>
                   <div><dt>Vento</dt><dd>12 km/h</dd></div>
@@ -100,13 +114,20 @@
             <article data-dashboard="sorocaba" tabindex="0" role="link"
               aria-label="Abrir dashboard climático de Sorocaba">
               <div class="clima sun">
-                <span class="icone-clima" aria-hidden="true">☀</span>
-                <p class="temperatura-cartao">26<span> °C</span></p>
-                <p>Ensolarado</p>
+                <img class="foto-localidade" src="../ASSETS/images/locations/sorocaba.webp"
+                  alt="Paisagem de Sorocaba — fotografia fornecida para o projeto"
+                  width="960" height="719" fetchpriority="high" decoding="async" draggable="false">
+                <div class="condicoes-cartao">
+                  <span class="icone-clima" aria-hidden="true">☀</span>
+                  <p class="temperatura-cartao">26<span> °C</span></p>
+                  <p>Ensolarado</p>
+                </div>
+                <div class="identificacao-localidade">
+                  <h3 id="titulo-sorocaba">Sorocaba</h3>
+                  <p class="estado">SP</p>
+                </div>
               </div>
               <div class="detalhes-localidade">
-                <h3 id="titulo-sorocaba">Sorocaba</h3>
-                <p class="estado">SP</p>
                 <dl class="resumo-localidade">
                   <div><dt>Umidade</dt><dd>54 %</dd></div>
                   <div><dt>Vento</dt><dd>9 km/h</dd></div>
@@ -123,13 +144,20 @@
             <article data-dashboard="santos" tabindex="0" role="link"
               aria-label="Abrir dashboard climático de Santos">
               <div class="clima rain">
-                <span class="icone-clima" aria-hidden="true">☂</span>
-                <p class="temperatura-cartao">24<span> °C</span></p>
-                <p>Chuva leve</p>
+                <img class="foto-localidade" src="../ASSETS/images/locations/santos.webp"
+                  alt="Paisagem de Santos — fotografia fornecida para o projeto"
+                  width="720" height="960" loading="lazy" decoding="async" draggable="false">
+                <div class="condicoes-cartao">
+                  <span class="icone-clima" aria-hidden="true">☂</span>
+                  <p class="temperatura-cartao">24<span> °C</span></p>
+                  <p>Chuva leve</p>
+                </div>
+                <div class="identificacao-localidade">
+                  <h3 id="titulo-santos">Santos</h3>
+                  <p class="estado">SP</p>
+                </div>
               </div>
               <div class="detalhes-localidade">
-                <h3 id="titulo-santos">Santos</h3>
-                <p class="estado">SP</p>
                 <dl class="resumo-localidade">
                   <div><dt>Umidade</dt><dd>78 %</dd></div>
                   <div><dt>Vento</dt><dd>21 km/h</dd></div>
@@ -146,13 +174,20 @@
             <article data-dashboard="curitiba" tabindex="0" role="link"
               aria-label="Abrir dashboard climático de Curitiba">
               <div class="clima cloud">
-                <span class="icone-clima" aria-hidden="true">☁</span>
-                <p class="temperatura-cartao">17<span> °C</span></p>
-                <p>Nublado</p>
+                <img class="foto-localidade" src="../ASSETS/images/locations/curitiba.webp"
+                  alt="Paisagem de Curitiba — fotografia fornecida para o projeto"
+                  width="768" height="960" loading="lazy" decoding="async" draggable="false">
+                <div class="condicoes-cartao">
+                  <span class="icone-clima" aria-hidden="true">☁</span>
+                  <p class="temperatura-cartao">17<span> °C</span></p>
+                  <p>Nublado</p>
+                </div>
+                <div class="identificacao-localidade">
+                  <h3 id="titulo-curitiba">Curitiba</h3>
+                  <p class="estado">PR</p>
+                </div>
               </div>
               <div class="detalhes-localidade">
-                <h3 id="titulo-curitiba">Curitiba</h3>
-                <p class="estado">PR</p>
                 <dl class="resumo-localidade">
                   <div><dt>Umidade</dt><dd>72 %</dd></div>
                   <div><dt>Vento</dt><dd>14 km/h</dd></div>
