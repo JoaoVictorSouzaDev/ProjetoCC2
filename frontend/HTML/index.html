@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Painel demonstrativo do projeto acadêmico Estação Ambiental IoT.">
+  <title>Estação Ambiental IoT — Painel meteorológico</title>
+  <link rel="stylesheet" href="../CSS/painel.css">
+  <script type="module" src="../JAVA%20SCRIPT/painel.js"></script>
+</head>
+<body class="pagina-index">
+  <a class="pular-conteudo" href="#conteudo-principal">Ir para o conteúdo principal</a>
+  <header class="cabecalho">
+    <div class="barra-navegacao">
+      <a class="marca" href="#apresentacao" aria-label="AERIS — Estação Ambiental IoT">AERIS</a>
+      <nav aria-label="Navegação principal">
+        <ul>
+          <li><a href="#localidades" aria-current="location">Locais</a></li>
+          <li><a id="link-dashboard" href="dashboard.html?local=sorocaba">Dashboard</a></li>
+        </ul>
+      </nav>
+      <span class="selo">Demonstrativo</span>
+    </div>
+  </header>
+
+  <main id="conteudo-principal">
+    <div class="pagina-locais container">
+      <section id="apresentacao" class="apresentacao" aria-labelledby="titulo-apresentacao">
+        <div>
+          <h1 id="titulo-apresentacao">Explore o clima por local</h1>
+          <p>Selecione uma cidade para acompanhar as condições ambientais e acessar os dados completos.</p>
+        </div>
+        <form role="search" id="busca-localidades">
+          <label class="sr-only" for="busca">Buscar cidade ou estação</label>
+          <input id="busca" type="search" placeholder="Buscar cidade ou estação" autocomplete="off" disabled>
+        </form>
+      </section>
+
+      <section id="localidades" aria-labelledby="titulo-localidades" aria-describedby="aviso-demonstracao">
+        <div class="titulo-secao">
+          <h2 id="titulo-localidades">Locais monitorados</h2>
+          <p id="contagem-localidades">5 localidades demonstrativas</p>
+        </div>
+        <div class="carrossel" role="region" aria-roledescription="carrossel" aria-label="Localidades">
+          <button class="seta anterior" type="button" aria-label="Localidade anterior"
+            aria-controls="lista-localidades" disabled><span aria-hidden="true">‹</span></button>
+          <ul id="lista-localidades" class="lista-localidades" tabindex="0"
+            aria-label="Localidades. Use as setas do teclado, Home ou End para selecionar.">
+          <li class="localidade" data-localidade="sao-paulo">
+            <article data-dashboard="sao-paulo" tabindex="0" role="link"
+              aria-label="Abrir dashboard climático de São Paulo">
+              <div class="clima cloud">
+                <img class="foto-localidade" src="../ASSETS/images/locations/sao-paulo.webp"
+                  alt="Paisagem de São Paulo — fotografia fornecida para o projeto"
+                  width="720" height="960" loading="lazy" decoding="async" draggable="false">
+                <div class="condicoes-cartao">
+                  <span class="icone-clima" aria-hidden="true">◒</span>
+                  <p class="temperatura-cartao">23<span> °C</span></p>
+                  <p>Parcialmente nublado</p>
+                </div>
+                <div class="identificacao-localidade">
+                  <h3 id="titulo-sao-paulo">São Paulo</h3>
+                  <p class="estado">SP</p>
+                </div>
+              </div>
+              <div class="detalhes-localidade">
+                <dl class="resumo-localidade">
+                  <div><dt>Umidade</dt><dd>64 %</dd></div>
+                  <div><dt>Vento</dt><dd>11 km/h</dd></div>
+                </dl>
+                <button class="selecionar" type="button" data-selecionar="sao-paulo"
+                  disabled>
+                  <span>Ver clima completo</span><span class="sr-only"> de São Paulo</span>
+                  <span aria-hidden="true"> →</span>
+                </button>
+              </div>
+            </article>
+          </li>
+          <li class="localidade" data-localidade="campinas">
+            <article data-dashboard="campinas" tabindex="0" role="link"
+              aria-label="Abrir dashboard climático de Campinas">
+              <div class="clima cloud">
+                <img class="foto-localidade" src="../ASSETS/images/locations/campinas.webp"
+                  alt="Paisagem de Campinas — fotografia fornecida para o projeto"
+                  width="960" height="540" loading="lazy" decoding="async" draggable="false">
+                <div class="condicoes-cartao">
+                  <span class="icone-clima" aria-hidden="true">◒</span>
+                  <p class="temperatura-cartao">25<span> °C</span></p>
+                  <p>Parcialmente nublado</p>
+                </div>
+                <div class="identificacao-localidade">
+                  <h3 id="titulo-campinas">Campinas</h3>
+                  <p class="estado">SP</p>
+                </div>
+              </div>
+              <div class="detalhes-localidade">
+                <dl class="resumo-localidade">
+                  <div><dt>Umidade</dt><dd>59 %</dd></div>
+                  <div><dt>Vento</dt><dd>12 km/h</dd></div>
+                </dl>
+                <button class="selecionar" type="button" data-selecionar="campinas"
+                  disabled>
+                  <span>Ver clima completo</span><span class="sr-only"> de Campinas</span>
+                  <span aria-hidden="true"> →</span>
+                </button>
+              </div>
+            </article>
+          </li>
+          <li class="localidade selecionada" data-localidade="sorocaba">
+            <article data-dashboard="sorocaba" tabindex="0" role="link"
+              aria-label="Abrir dashboard climático de Sorocaba">
+              <div class="clima sun">
+                <img class="foto-localidade" src="../ASSETS/images/locations/sorocaba.webp"
+                  alt="Paisagem de Sorocaba — fotografia fornecida para o projeto"
+                  width="960" height="719" fetchpriority="high" decoding="async" draggable="false">
+                <div class="condicoes-cartao">
+                  <span class="icone-clima" aria-hidden="true">☀</span>
+                  <p class="temperatura-cartao">26<span> °C</span></p>
+                  <p>Ensolarado</p>
+                </div>
+                <div class="identificacao-localidade">
+                  <h3 id="titulo-sorocaba">Sorocaba</h3>
+                  <p class="estado">SP</p>
+                </div>
+              </div>
+              <div class="detalhes-localidade">
+                <dl class="resumo-localidade">
+                  <div><dt>Umidade</dt><dd>54 %</dd></div>
+                  <div><dt>Vento</dt><dd>9 km/h</dd></div>
+                </dl>
+                <button class="selecionar" type="button" data-selecionar="sorocaba"
+                  disabled>
+                  <span>Ver clima completo</span><span class="sr-only"> de Sorocaba</span>
+                  <span aria-hidden="true"> →</span>
+                </button>
+              </div>
+            </article>
+          </li>
+          <li class="localidade" data-localidade="santos">
+            <article data-dashboard="santos" tabindex="0" role="link"
+              aria-label="Abrir dashboard climático de Santos">
+              <div class="clima rain">
+                <img class="foto-localidade" src="../ASSETS/images/locations/santos.webp"
+                  alt="Paisagem de Santos — fotografia fornecida para o projeto"
+                  width="720" height="960" loading="lazy" decoding="async" draggable="false">
+                <div class="condicoes-cartao">
+                  <span class="icone-clima" aria-hidden="true">☂</span>
+                  <p class="temperatura-cartao">24<span> °C</span></p>
+                  <p>Chuva leve</p>
+                </div>
+                <div class="identificacao-localidade">
+                  <h3 id="titulo-santos">Santos</h3>
+                  <p class="estado">SP</p>
+                </div>
+              </div>
+              <div class="detalhes-localidade">
+                <dl class="resumo-localidade">
+                  <div><dt>Umidade</dt><dd>78 %</dd></div>
+                  <div><dt>Vento</dt><dd>21 km/h</dd></div>
+                </dl>
+                <button class="selecionar" type="button" data-selecionar="santos"
+                  disabled>
+                  <span>Ver clima completo</span><span class="sr-only"> de Santos</span>
+                  <span aria-hidden="true"> →</span>
+                </button>
+              </div>
+            </article>
+          </li>
+          <li class="localidade" data-localidade="curitiba">
+            <article data-dashboard="curitiba" tabindex="0" role="link"
+              aria-label="Abrir dashboard climático de Curitiba">
+              <div class="clima cloud">
+                <img class="foto-localidade" src="../ASSETS/images/locations/curitiba.webp"
+                  alt="Paisagem de Curitiba — fotografia fornecida para o projeto"
+                  width="768" height="960" loading="lazy" decoding="async" draggable="false">
+                <div class="condicoes-cartao">
+                  <span class="icone-clima" aria-hidden="true">☁</span>
+                  <p class="temperatura-cartao">17<span> °C</span></p>
+                  <p>Nublado</p>
+                </div>
+                <div class="identificacao-localidade">
+                  <h3 id="titulo-curitiba">Curitiba</h3>
+                  <p class="estado">PR</p>
+                </div>
+              </div>
+              <div class="detalhes-localidade">
+                <dl class="resumo-localidade">
+                  <div><dt>Umidade</dt><dd>72 %</dd></div>
+                  <div><dt>Vento</dt><dd>14 km/h</dd></div>
+                </dl>
+                <button class="selecionar" type="button" data-selecionar="curitiba"
+                  disabled>
+                  <span>Ver clima completo</span><span class="sr-only"> de Curitiba</span>
+                  <span aria-hidden="true"> →</span>
+                </button>
+              </div>
+            </article>
+          </li>
+          </ul>
+          <button class="seta proxima" type="button" aria-label="Próxima localidade"
+            aria-controls="lista-localidades" disabled><span aria-hidden="true">›</span></button>
+        </div>
+        <div class="paginacao" role="group" aria-label="Selecionar localidade"></div>
+        <p id="resultado-busca" role="status" class="mensagem-busca"></p>
+        <p id="aviso-demonstracao" class="aviso">
+          <strong>Dados demonstrativos.</strong> Use as setas, deslize os cartões ou selecione “Ver clima completo”.
+          Nenhum valor é uma leitura real de sensores.
+        </p>
+        <p id="anuncio-localidade" class="sr-only" role="status" aria-atomic="true"></p>
+        <noscript><p class="aviso">Ative o JavaScript para selecionar localidades e acessar os dashboards de cada cidade.</p></noscript>
+      </section>
+    </div>
+
+  </main>
+  <footer class="rodape"><div class="container">
+    <p>Estação Ambiental IoT <span>— Projeto acadêmico</span></p>
+    <a href="#conteudo-principal">Voltar ao início ↑</a>
+  </div></footer>
+</body>
+</html>

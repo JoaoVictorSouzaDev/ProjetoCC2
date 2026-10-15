@@ -1,0 +1,208 @@
+:root {
+  color-scheme: dark;
+  --fundo: #08111f;
+  --gradiente-pagina: linear-gradient(180deg, #0f1c2e 0%, var(--fundo) 100%);
+  --brilho-pagina: radial-gradient(ellipse at center,
+    rgb(45 212 191 / 13%), rgb(15 34 52 / 7%) 45%, transparent 72%);
+  --superficie: #101c2e;
+  --cartao: #17273b;
+  --borda: #283a51;
+  --texto: #e5edf5;
+  --secundario: #a2b2c5;
+  --destaque: #27cbbb;
+  --destaque-escuro: #093e3d;
+  --fonte: "Inter", "Segoe UI", Arial, sans-serif;
+  --espaco-pequeno: 8px;
+  --espaco-medio: 16px;
+  --espaco-grande: 24px;
+  --margem: 80px;
+  --raio: 12px;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 24px; }
+body { margin: 0; min-height: 100vh; color: var(--texto); font: 16px/1.5 var(--fonte);
+  background-color: var(--fundo); background-image: var(--gradiente-pagina); background-attachment: fixed; }
+a { color: inherit; text-decoration: none; }
+button, input { font: inherit; }
+button, a, input { -webkit-tap-highlight-color: transparent; }
+button { cursor: pointer; }
+button:disabled { cursor: default; opacity: .4; }
+button, input { color: var(--texto); }
+:focus-visible { outline: 3px solid var(--destaque); outline-offset: 5px; }
+h1, h2, h3, p, dl, dd { margin: 0; }
+h1 { font-size: 36px; line-height: 1.2; letter-spacing: -.7px; }
+h2 { font-size: 20px; line-height: 1.3; }
+h3 { font-size: 18px; line-height: 1.4; }
+p { color: var(--secundario); }
+[hidden] { display: none !important; }
+.container { width: min(100%, 1440px); padding-inline: var(--margem); margin-inline: auto; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden;
+  clip-path: inset(50%); white-space: nowrap; border: 0; }
+.pular-conteudo { position: fixed; top: 8px; left: 8px; transform: translateY(-160%); z-index: 20;
+  padding: 12px; background: var(--destaque); color: var(--fundo); }
+.pular-conteudo:focus { transform: none; }
+.cabecalho { background: var(--superficie); border-bottom: 1px solid var(--borda); }
+.barra-navegacao { max-width: 1440px; min-height: 72px; padding: 12px var(--margem); margin: auto;
+  display: flex; align-items: center; gap: 28px; }
+.marca { display: inline-flex; align-items: center; flex-shrink: 0; min-height: 44px;
+  color: var(--destaque); font-size: 28px; line-height: 1; font-weight: 750; letter-spacing: .14em;
+  white-space: nowrap; }
+nav { margin-left: auto; }
+nav ul { display: flex; gap: 28px; align-items: center; list-style: none; margin: 0; padding: 0; }
+nav a { display: block; padding: 8px 10px; color: var(--secundario); border-radius: 8px; font-size: 14px; }
+nav a:hover, nav a[aria-current] { background: var(--destaque-escuro); color: var(--destaque); }
+.selo { display: inline-block; padding: 6px 12px; border-radius: 20px; background: var(--destaque-escuro);
+  color: #71e6d5; font-size: 12px; white-space: nowrap; }
+.pagina-locais { padding-top: 52px; padding-bottom: 24px; }
+.apresentacao { display: flex; justify-content: space-between; gap: 32px; align-items: center; }
+.apresentacao p { margin-top: 10px; font-size: 15px; }
+#busca-localidades { flex: 0 0 320px; }
+#busca { width: 100%; height: 46px; padding: 12px 16px; border: 1px solid var(--borda);
+  border-radius: var(--raio); background: var(--superficie); font-size: 14px; }
+#busca::placeholder { color: var(--secundario); }
+.titulo-secao { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-bottom: 24px; }
+.titulo-secao p { font-size: 12px; }
+#localidades { margin-top: 70px; }
+.carrossel { position: relative; container-type: inline-size; max-width: 1000px; margin-inline: auto; }
+.pagina-index .carrossel::before {
+  content: "";
+  position: absolute;
+  inset: -12% 0;
+  pointer-events: none;
+  background: var(--brilho-pagina);
+}
+.lista-localidades { position: relative; display: flex; align-items: center; gap: 24px; margin: 0;
+  padding: 32px 0; list-style: none; min-height: 536px; overflow-x: auto; overflow-y: hidden;
+  overscroll-behavior-x: contain; scrollbar-width: none; overflow-anchor: none;
+  scroll-behavior: auto; touch-action: pan-y; cursor: grab; }
+.lista-localidades::-webkit-scrollbar { display: none; }
+.lista-localidades.arrastando { cursor: grabbing; user-select: none; }
+.localidade { flex: 0 0 380px; min-width: 0; }
+.localidade article {
+  display: flex; flex-direction: column; min-height: 470px; width: 100%;
+  border: 1px solid var(--borda); border-radius: 22px; background: var(--cartao);
+  transform: scale(.92); opacity: .75;
+  transition: transform 320ms ease, opacity 320ms ease, border-color 320ms ease;
+}
+.localidade.selecionada article { transform: scale(1); opacity: 1; border-color: var(--destaque);
+  box-shadow: inset 0 0 0 1px var(--destaque); }
+.localidade article[role="link"] { cursor: pointer; }
+.localidade article:focus-visible { outline-offset: 3px; }
+.localidade:focus-within article, .localidade:hover article { opacity: 1; }
+.clima {
+  position: relative; isolation: isolate; overflow: hidden; border-radius: 21px 21px 0 0;
+  display: flex; flex-direction: column; justify-content: space-between; gap: 16px;
+  min-height: 300px; padding: 20px 24px; background: linear-gradient(105deg, #113751, #08111f);
+}
+.clima.sun { background: linear-gradient(105deg, #096474, #08111f); }
+.clima.rain { background: linear-gradient(105deg, #102f4e, #08111f); }
+.clima.cloud { background: linear-gradient(105deg, #15334b, #08111f); }
+.clima .foto-localidade { position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%;
+  object-fit: cover; object-position: center; pointer-events: none; }
+.clima::after { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: linear-gradient(180deg, rgb(8 17 31 / 48%), rgb(8 17 31 / 60%) 55%, rgb(8 17 31 / 92%)); }
+[data-localidade="sao-paulo"] .foto-localidade { object-position: center 65%; }
+[data-localidade="santos"] .foto-localidade { object-position: center 75%; }
+[data-localidade="curitiba"] .foto-localidade { object-position: center 60%; }
+.condicoes-cartao { display: flex; flex-direction: column; align-items: center; gap: 6px;
+  text-align: center; text-shadow: 0 2px 8px #08111f; }
+.icone-clima { font: 48px/1.2 "Segoe UI Symbol", sans-serif; color: #b9c9d5; }
+.sun .icone-clima { color: #ffcf18; }
+.rain .icone-clima { color: #b76fe8; }
+.temperatura-cartao { font-size: 48px; line-height: 1.2; font-weight: 700; color: var(--texto); }
+.temperatura-cartao span { font-size: .45em; font-weight: 500; }
+.condicoes-cartao > p:last-child { font-size: 13px; color: var(--texto); }
+.identificacao-localidade { text-shadow: 0 2px 8px #08111f; }
+.identificacao-localidade h3 { font-size: 24px; }
+.estado { font-size: 12px; margin-top: 2px; color: var(--texto); }
+.detalhes-localidade { display: flex; flex: 1; flex-direction: column; gap: 16px; padding: 20px 24px 24px; }
+.resumo-localidade { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.resumo-localidade div { min-width: 0; background: #0b1727; border-radius: 8px; padding: 8px 10px; }
+.resumo-localidade dt { font-size: 11px; color: var(--secundario); }
+.resumo-localidade dd { font-size: 14px; }
+.selecionar { display: flex; align-items: center; justify-content: center; gap: 4px; width: 100%; min-height: 44px;
+  border: 1px solid var(--borda); border-radius: 8px; background: var(--superficie);
+  padding: 8px; font-size: 12px; margin-top: auto; }
+.selecionada .selecionar { background: var(--destaque); color: #052929; border-color: var(--destaque); font-weight: 650; }
+.selecionar:hover { border-color: var(--destaque); }
+.lista-localidades.sem-transicao, .lista-localidades.sem-transicao * { transition: none; }
+.seta { position: absolute; top: 50%; transform: translateY(-50%); z-index: 2; width: 48px; height: 48px;
+  border: 1px solid var(--borda); border-radius: 50%; background: #101c2eeF; font-size: 32px; line-height: 1; }
+.seta:hover { border-color: var(--destaque); color: var(--destaque); }
+.anterior { left: 12px; }
+.proxima { right: 12px; }
+.paginacao { display: flex; justify-content: center; gap: 0; }
+.paginacao button { display: grid; place-items: center; width: 32px; height: 32px; padding: 0; border: 0;
+  background: transparent; }
+.paginacao button::after { content: ""; display: block; width: 7px; height: 7px; border-radius: 10px; background: var(--borda); }
+.paginacao button[aria-pressed="true"]::after { width: 20px; background: var(--destaque); }
+.aviso { background: #0b2236; border: 1px solid #24495c; border-radius: 10px; padding: 16px; font-size: 13px; margin-top: 22px; }
+.aviso strong { color: var(--texto); }
+.mensagem-busca:empty { display: none; }
+.mensagem-busca { text-align: center; margin-top: 12px; }
+.indicadores { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+.indicadores > div { border: 1px solid var(--borda); border-radius: var(--raio); padding: 24px; min-height: 170px; }
+.indicadores dt { font-size: 14px; color: var(--secundario); margin-bottom: 16px; }
+.indicadores dd { font-size: 30px; font-weight: 600; }
+#historico { margin-top: 40px; }
+.grade-apoio { display: grid; grid-template-columns: 2fr 1fr; gap: 24px; }
+.painel-apoio { border: 1px solid var(--borda); border-radius: var(--raio); padding: 24px; }
+.painel-apoio h2, .painel-apoio h3 { font-size: 18px; }
+.painel-apoio p { font-size: 14px; margin-top: 16px; }
+.destaque-resumo { background: var(--destaque-escuro); padding: 16px; border-radius: 8px; color: #b5ebe2; }
+.link-destaque { color: var(--destaque); display: inline-block; margin-top: 24px; font-size: 14px; }
+.ficha-projeto { font-size: 12px; margin-top: 20px; }
+.ficha-projeto > div { display: flex; justify-content: space-between; gap: 16px; margin-top: 10px; }
+.ficha-projeto dt { color: var(--secundario); }
+.ficha-projeto dd { text-align: right; }
+.rodape { border-top: 1px solid var(--borda); background: var(--superficie); padding-block: 30px; font-size: 12px; }
+.rodape .container { display: flex; justify-content: space-between; gap: 24px; }
+.rodape p { color: var(--texto); }
+.rodape span, .rodape a { color: var(--secundario); }
+
+@media (max-width: 1150px) {
+  :root { --margem: 32px; }
+  .barra-navegacao, nav ul { gap: 12px; }
+  .barra-navegacao > .selo { display: none; }
+  .apresentacao { align-items: flex-start; }
+  #busca-localidades { flex-basis: 260px; }
+  h1 { font-size: 30px; }
+}
+@media (max-width: 760px) {
+  :root { --margem: 20px; }
+  .barra-navegacao { flex-wrap: wrap; padding-block: 16px; }
+  nav { width: 100%; margin: 0; overflow-x: auto; }
+  nav ul { justify-content: space-between; gap: 4px; }
+  nav a { padding: 8px 6px; font-size: 12px; }
+  .pagina-locais { padding-top: 32px; }
+  .apresentacao { flex-direction: column; align-items: stretch; }
+  .apresentacao { gap: 20px; }
+  #busca-localidades { flex: auto; }
+  h1 { font-size: 28px; }
+  #localidades { margin-top: 36px; }
+  .titulo-secao { flex-wrap: wrap; gap: 8px; }
+  .titulo-secao h2 { font-size: 18px; }
+  .lista-localidades { min-height: 462px; padding-block: 16px; gap: 12px; }
+  .localidade { flex-basis: min(360px, 80cqw); }
+  .localidade article { min-height: 440px; }
+  .clima { min-height: 280px; padding: 16px; }
+  .detalhes-localidade { padding: 16px; }
+  .identificacao-localidade h3 { font-size: 22px; }
+  .seta { width: 40px; height: 40px; }
+  .anterior { left: -10px; }
+  .proxima { right: -10px; }
+  .indicadores { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .indicadores > div { padding: 16px; }
+  .indicadores dd { font-size: 24px; }
+  .grade-apoio { grid-template-columns: 1fr; gap: 16px; }
+  .rodape .container { flex-direction: column; gap: 8px; }
+}
+@media (max-width: 360px) {
+  .indicadores { grid-template-columns: 1fr; }
+  .marca { font-size: 24px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .lista-localidades, .lista-localidades * { transition: none; }
+}
