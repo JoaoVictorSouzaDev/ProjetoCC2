@@ -1,4 +1,3 @@
-
 CREATE TABLE IF NOT EXISTS estacoes (
     id SERIAL PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
@@ -9,8 +8,8 @@ CREATE TABLE IF NOT EXISTS estacoes (
 );
 
 CREATE TABLE IF NOT EXISTS leituras (
-    id BIGSERIAL PRIMARY KEY,
-    estacao_id INT NOT NULL,
+    id SERIAL PRIMARY KEY,
+    estacao_id BIGINT UNSIGNED NOT NULL,
     temperatura REAL,
     umidade REAL,
     pressao REAL,
@@ -23,7 +22,7 @@ CREATE TABLE IF NOT EXISTS leituras (
 
 CREATE TABLE IF NOT EXISTS alertas (
     id SERIAL PRIMARY KEY,
-    estacao_id INT NOT NULL,
+    estacao_id BIGINT UNSIGNED NOT NULL, -- Corrigido para BIGINT UNSIGNED
     tipo_alerta VARCHAR(50) NOT NULL,
     mensagem TEXT NOT NULL,
     nivel_critico VARCHAR(20) NOT NULL,
