@@ -133,8 +133,8 @@ void loop() {
     int brutoLuz = lerAnalogicoEstavel(PIN_LDR);
     // Considerando o divisor de tensão onde mais luz = menor valor ou maior valor,
     // aqui mapeamos invertido caso o escuro seja alto, ou direto (0 a 4095 para 0 a 100):
-    int luminosidade = map(brutoLuz, 4095, 0, 0, 100); 
-    luminosidade = constrain(luminosidade, 0, 100); // Trava estritamente entre 0 e 100
+    int luminosidade = map(brutoLuz, 0, 4095, 0, 100); 
+luminosidade = constrain(luminosidade, 0, 100);
 
     // Monitoramento Local no Serial
     Serial.println("--------------------------------------------------");
