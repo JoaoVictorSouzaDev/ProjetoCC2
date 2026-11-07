@@ -16,7 +16,22 @@
   <symbol id="light" viewBox="0 0 24 24">
     <circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5 19 19M5 19l1.5-1.5M17.5 6.5 19 5"/>
   </symbol>
-  <symbol id="sound" viewBox="0 0 24 24">
-    <path d="M3 9h4l5-4v14l-5-4H3ZM16 8a6 6 0 0 1 0 8M19 5a10 10 0 0 1 0 14"/>
+  <symbol id="cloud" viewBox="0 0 24 24">
+    <path d="M6 18a4 4 0 0 1-1-8 6 6 0 0 1 11-2 5 5 0 1 1 2 10Z"/>
   </symbol>
+  <symbol id="partly-cloudy" viewBox="0 0 24 24">
+    <path d="M7 3V1M2 8H0M3 3 2 2M12 3l1-1M3 13l-1 1"/>
+    <path d="M10 8a4 4 0 1 0-5 4M9 21a4 4 0 0 1-1-8 5 5 0 0 1 9-2 5 5 0 1 1 2 10Z"/>
+  </symbol>
+  <symbol id="rain" viewBox="0 0 24 24">
+    <path d="M5 15a4 4 0 0 1 0-8 6 6 0 0 1 11-1 5 5 0 0 1 2 9M8 17l-1 4M13 17l-1 4M18 17l-1 4"/>
+  </symbol>
+  <symbol id="arrow-right" viewBox="0 0 24 24"><path d="M4 12h16m-6-6 6 6-6 6"/></symbol>
+  <symbol id="arrow-left" viewBox="0 0 24 24"><path d="M20 12H4m6-6-6 6 6 6"/></symbol>
+  <symbol id="refresh" viewBox="0 0 24 24"><path d="M20 7v5h-5M4 17v-5h5M5 8a8 8 0 0 1 14-2l1 6M4 12l1 6a8 8 0 0 0 14-2"/></symbol>
+  <symbol id="loading" viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-8-8"/></symbol>
+  <symbol id="error" viewBox="0 0 24 24"><path d="m12 3 10 18H2ZM12 9v5M12 17v1"/></symbol>
+  <symbol id="offline" viewBox="0 0 24 24"><path d="m3 3 18 18M4 9a12 12 0 0 1 2-1m4-2a12 12 0 0 1 10 3M7 13a7 7 0 0 1 4-2m4 1 2 1M10 17l2-1 2 1"/></symbol>
+  <symbol id="clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 6v6l4 2"/></symbol>
+  <symbol id="check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m7 12 3 3 7-7"/></symbol>
 </svg>
