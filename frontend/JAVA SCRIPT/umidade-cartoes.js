@@ -20,13 +20,13 @@ function mostrar(estacao, resultado) {
   umidade.textContent = apresentarUmidade(leitura?.umidade).texto;
   origem('umidade').textContent = situacao;
   const qualidadeAr = valor('qualidade-ar');
-  qualidadeAr.textContent = numero(leitura?.ar);
+  qualidadeAr.textContent = Number.isFinite(leitura?.ar) ? `${numero(leitura.ar)} %` : 'Indisponível';
   origem('ar').textContent = situacao;
   const pressao = valor('pressao');
   pressao.textContent = numero(leitura?.pressao);
   origem('pressao').textContent = situacao;
   const luminosidade = valor('luminosidade');
-  luminosidade.textContent = numero(leitura?.luminosidade);
+  luminosidade.textContent = Number.isFinite(leitura?.luminosidade) ? `${numero(leitura.luminosidade)} %` : 'Indisponível';
   origem('luminosidade').textContent = situacao;
   [temperatura, umidade, qualidadeAr, pressao, luminosidade].forEach(item => {
     item.dataset.horario = leitura?.horario || '';

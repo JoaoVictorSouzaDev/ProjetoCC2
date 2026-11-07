@@ -7,7 +7,7 @@ import { apresentarUmidade } from './umidade.js?v=20261105u';
 let precipitacaoAtual = null;
 export const elemento = id => document.getElementById(id);
 export const escrever = (id, texto) => { elemento(id).textContent = texto; };
-const unidades = { temperatura: '°C', umidade: '%', pressao: 'hPa', ar: '', luminosidade: 'lx' };
+const unidades = { temperatura: '°C', umidade: '%', pressao: 'hPa', ar: '%', luminosidade: '%' };
 function linha(valores) {
   const tr = document.createElement('tr');
   valores.forEach(valor => { const td = document.createElement('td'); td.textContent = valor; tr.append(td); });

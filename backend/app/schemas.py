@@ -3,11 +3,11 @@ from typing import Optional
 
 class LeituraCreate(BaseModel):
     estacao_id: int = 1
-    temperatura: float
-    umidade: float
+    temperatura: Optional[float] = 0.0 #Provisório
+    umidade: Optional[float] = 0.0 #Provisório
     pressao: float
     qualidade_ar: float
-    luminosidade: float
+    luminosidade: int
 
 class LeituraResponse(LeituraCreate):
     id: int
