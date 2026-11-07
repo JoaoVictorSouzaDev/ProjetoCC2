@@ -12,15 +12,8 @@
   <a class="pular-conteudo" href="#conteudo-principal">Ir para o conteúdo principal</a>
   <header class="cabecalho">
     <div class="barra-navegacao">
-      <a class="marca" href="#apresentacao" aria-label="AERIS — Estação Ambiental IoT">AERIS</a>
-      <nav aria-label="Navegação principal">
-        <ul>
-          <li><a href="#localidades" aria-current="location">Locais</a></li>
-          <li><a href="#sobre-nos">Sobre nós</a></li>
-          <li><a id="link-dashboard" href="dashboard.html?local=sorocaba">Dashboard</a></li>
-        </ul>
-      </nav>
-
+      <!-- Agora configurado para recarregar a página -->
+      <a class="marca" href="#" onclick="window.location.reload(); return false;" aria-label="AERIS — Estação Ambiental IoT">AERIS</a>
     </div>
   </header>
 
@@ -28,8 +21,8 @@
     <div class="pagina-locais container">
       <section id="apresentacao" class="apresentacao" aria-labelledby="titulo-apresentacao">
         <div>
-          <h1 id="titulo-apresentacao">Explore o clima por local</h1>
-          <p>Selecione uma cidade para acompanhar as condições ambientais e acessar os dados completos.</p>
+          <h1 id="titulo-apresentacao">Explore o clima em uma região</h1>
+          <p>Selecione uma cidade para conferir as condições do ambiente e os dados da estação.</p>
         </div>
         <form role="search" id="busca-localidades">
           <label class="sr-only" for="busca">Buscar cidade ou estação</label>
@@ -39,7 +32,7 @@
 
       <section id="localidades" aria-labelledby="titulo-localidades">
         <div class="titulo-secao">
-          <h2 id="titulo-localidades">Locais monitorados</h2>
+          <h2 id="titulo-localidades">Estações Disponíveis: </h2>
           <p id="contagem-localidades">Localidades · dados da API</p>
         </div>
         <div class="carrossel" role="region" aria-roledescription="carrossel" aria-label="Localidades">
@@ -71,7 +64,6 @@
   </main>
   <footer class="rodape"><div class="container">
     <p>Estação Ambiental IoT <span>— Projeto AERIS</span></p>
-    <a href="#conteudo-principal">Voltar ao início</a>
   </div></footer>
 </body>
 </html>

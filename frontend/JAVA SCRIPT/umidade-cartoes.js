@@ -1,4 +1,4 @@
-import { catalogoEstacoes } from './estacoes.js?v=20261105u';
+import { catalogoEstacoes } from './estacoes.js?v=20261107c';
 import { obterLeituraCompartilhada, politicaInicialDeLeitura } from './leitura-compartilhada.js?v=20261105u';
 import { normalizarLeitura, formatarHorario, numero } from './leituras.js?v=20261105u';
 import { apresentarUmidade } from './umidade.js?v=20261105u';

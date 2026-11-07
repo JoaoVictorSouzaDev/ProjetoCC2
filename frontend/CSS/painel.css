@@ -54,6 +54,7 @@ p { color: var(--secundario); }
 .cabecalho { background: var(--superficie); border-bottom: 1px solid var(--borda); }
 .barra-navegacao { max-width: 1440px; min-height: 72px; padding: 12px var(--margem); margin: auto;
   display: flex; align-items: center; gap: 28px; }
+.pagina-index .barra-navegacao { justify-content: center; }
 .marca { display: inline-flex; align-items: center; flex-shrink: 0; min-height: 44px;
   color: var(--destaque); font-size: 28px; line-height: 1; font-weight: 750; letter-spacing: .14em;
   white-space: nowrap; }

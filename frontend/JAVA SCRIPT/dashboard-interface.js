@@ -1,4 +1,4 @@
-import { mostrarEstado } from './estados-interface.js?v=20261105v';
+import { mostrarEstado } from './estados-interface.js?v=20261107c';
 import { icone } from './icones.js?v=20261105u';
 import { campos, numero, formatarHorario, classificar } from './leituras.js?v=20261105u';
 import { desenharGrafico } from './grafico-temperatura.js?v=20261105u';
@@ -41,9 +41,13 @@ export function mostrarLeitura(item) {
   });
   escrever('unidade-umidade', umidade.unidade);
   elemento('metrica-umidade').dataset.horario = item?.horario || '';
-  document.querySelector('.nota-unidade').dataset.leituraDisponivel = String(Number.isFinite(item?.ar));
-  escrever('ultima-leitura', formatarHorario(item?.horario));
-  elemento('ultima-leitura').dateTime = item?.horario || '';
+  const nota = document.querySelector('.nota-unidade');
+  if (nota) nota.dataset.leituraDisponivel = String(Number.isFinite(item?.ar));
+  const ultimaLeitura = elemento('ultima-leitura');
+  if (ultimaLeitura) {
+    escrever('ultima-leitura', formatarHorario(item?.horario));
+    ultimaLeitura.dateTime = item?.horario || '';
+  }
   escrever('resumo-umidade', umidade.texto);
   escrever('resumo-texto', Number.isFinite(item?.umidade) ? classificar('umidade', item.umidade) : 'Aguardando medições para interpretação.');
 }
@@ -51,27 +55,34 @@ export function mostrarHistorico(registros, contexto) {
   const serie = registros.filter(item => item.horario && Number.isFinite(item.temperatura));
   const valores = registros.map(item => item.temperatura).filter(Number.isFinite);
   const nota = document.querySelector('.nota-unidade');
-  nota.hidden = nota.dataset.leituraDisponivel !== 'true' && !registros.some(item => Number.isFinite(item.ar));
+  if (nota) nota.hidden = nota.dataset.leituraDisponivel !== 'true' && !registros.some(item => Number.isFinite(item.ar));
   escrever('resumo-minima', valores.length ? `${numero(valores.reduce((minimo, valor) => Math.min(minimo, valor), Infinity))} °C` : 'Indisponível');
   escrever('resumo-maxima', valores.length ? `${numero(valores.reduce((maximo, valor) => Math.max(maximo, valor), -Infinity))} °C` : 'Indisponível');
   escrever('titulo-grafico', `Temperatura — ${contexto.data}`);
   escrever('subtitulo-grafico', `${contexto.nome} · ${registros.length} leituras`);
   escrever('resumo-grafico', registros.length ? `${serie.length} amostras com temperatura e horário válidos.` : 'Histórico vazio.');
   desenharGrafico(serie, { nome: contexto.nome, periodo: '24h' });
-  elemento('tabela-serie').replaceChildren(...serie.map(item => linha([formatarHorario(item.horario), numero(item.temperatura)])));
-  escrever('legenda-serie', `${contexto.nome} · ${contexto.data} · horários em Brasília`);
   escrever('legenda-medicoes', `${contexto.nome} · ${contexto.data}`);
-  mostrarTabela(registros, contexto.limite);
+  mostrarTabela(registros, contexto.pagina);
   mostrarDisponibilidadeHistorico(serie, contexto.situacao);
 }
-export function mostrarTabela(registros, limite) {
-  elemento('expandir-medicoes').hidden = registros.length <= 3;
-  elemento('expandir-medicoes').setAttribute('aria-expanded', String(limite !== 3));
-  escrever('expandir-medicoes', limite === 3 ? 'Ver todas as amostras' : 'Mostrar últimas três');
-  elemento('registros-medicoes').replaceChildren(...[...registros].reverse().slice(0, limite).map(item =>
+export function mostrarTabela(registros, pagina = 1) {
+  const tamanhoPagina = 10;
+  const totalPaginas = Math.max(1, Math.ceil(registros.length / tamanhoPagina));
+  const paginaAtual = Math.min(Math.max(1, pagina), totalPaginas);
+  const inicio = (paginaAtual - 1) * tamanhoPagina;
+  elemento('registros-medicoes').replaceChildren(...[...registros].reverse()
+    .slice(inicio, inicio + tamanhoPagina).map(item =>
     linha([formatarHorario(item.horario), ...['temperatura', 'umidade', 'pressao', 'ar'].map(campo =>
       campo === 'umidade' ? apresentarUmidade(item.umidade).texto :
         Number.isFinite(item[campo]) ? `${numero(item[campo])} ${unidades[campo]}` : 'Indisponível')])));
+  const rotuloRegistros = registros.length === 1 ? 'medição' : 'medições';
+  escrever('pagina-medicoes', registros.length
+    ? `Exibindo ${inicio + 1}–${Math.min(inicio + tamanhoPagina, registros.length)} de ${registros.length} ${rotuloRegistros} · página ${paginaAtual} de ${totalPaginas}`
+    : 'Nenhuma medição disponível.');
+  elemento('medicoes-anterior').disabled = paginaAtual === 1;
+  elemento('medicoes-proxima').disabled = paginaAtual === totalPaginas || registros.length === 0;
+  return paginaAtual;
 }
 
 function mostrarDisponibilidadeHistorico(serie, situacao) {
@@ -81,6 +92,6 @@ function mostrarDisponibilidadeHistorico(serie, situacao) {
     unconfigured: 'O histórico ficará disponível quando houver leituras desta localidade.' };
   elemento('grafico').toggleAttribute('hidden', !serie.length);
   elemento('leitura-grafico').hidden = !serie.length;
-  elemento('resumo-grafico').textContent = serie.length ? `${serie.length} amostras válidas · origem: API.`
+  elemento('resumo-grafico').textContent = serie.length ? `${serie.length} amostras válidas.`
     : textos[situacao] || 'Não há amostras com temperatura e horário válidos para desenhar o gráfico.';
 }

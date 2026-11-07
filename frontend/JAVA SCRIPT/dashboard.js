@@ -1,17 +1,20 @@
-import { catalogoEstacoes as localidades, moverSelecao } from './estacoes.js?v=20261105u';
+import { catalogoEstacoes as localidades, moverSelecao } from './estacoes.js?v=20261107c';
 import { consultarEstacao } from './consulta-estacao.js?v=20261105u';
 import { estadoDaFalha, estados } from './estados.js?v=20261105v';
 import { INTERVALO_ATUALIZACAO_MS } from './configuracao-api.js';
 import { politicaInicialDeLeitura } from './leitura-compartilhada.js?v=20261105u';
-import { elemento, escrever, mostrarSituacao, mostrarLeitura, mostrarHistorico, mostrarTabela } from './dashboard-interface.js?v=20261105v';
+import { elemento, escrever, mostrarSituacao, mostrarLeitura, mostrarHistorico, mostrarTabela } from './dashboard-interface.js?v=20261107c';
 
 let local, consulta, timer;
 let registros = [];
-let limite = 3;
+let paginaMedicoes = 1;
 const hoje = () => new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Sao_Paulo' }).format(new Date());
-function contexto() { return { nome: local?.nome || 'Localidade', data: elemento('data-historico').value, limite }; }
+function contexto() {
+  return { nome: local?.nome || 'Localidade', data: elemento('data-historico').value, pagina: paginaMedicoes };
+}
 function limparDados() {
   registros = [];
+  paginaMedicoes = 1;
   mostrarLeitura(null);
   mostrarHistorico([], { ...contexto(), situacao: 'loading' });
 }
@@ -36,7 +39,6 @@ function atualizarSelecao() {
     aba.tabIndex = ativa || (!local && aba.dataset.local === localidades[0].id) ? 0 : -1;
   });
   escrever('nome-local', local ? `${local.nome} — ${local.uf}` : 'Localidade não encontrada');
-  escrever('estacao-local', local?.nome || 'Indisponível');
   document.title = `${local?.nome || 'Localidade'} — AERIS`;
   elemento('dashboard').setAttribute('aria-labelledby', local ? `aba-${local.id}` : 'titulo-dashboard');
   requestAnimationFrame(revelarAbaAtiva);
@@ -68,6 +70,7 @@ function aplicarResultados(resultado) {
   mostrarHistorico(registros, { ...contexto(), situacao });
   const estado = { ...resultado.estado };
   if (resultado.falhaHistorico && ['success', 'stale'].includes(estado.tipo)) {
+    estado.tipo = resultado.falhaHistorico === 'offline' ? 'offline' : 'error';
     estado.texto = `${estado.texto || estados[estado.tipo].texto} O histórico não pôde ser atualizado.`;
   }
   mostrarSituacao(estado);
@@ -101,7 +104,7 @@ async function atualizarDados(politica = 'reutilizar') {
   } finally { finalizarConsulta(controle); }
 }
 function selecionarLocal(id) {
-  cancelarConsulta(); local = localidades.find(item => item.id === id); limite = 3;
+  cancelarConsulta(); local = localidades.find(item => item.id === id);
   atualizarSelecao(); atualizarEndereco(); atualizarDados();
   revelarAbaAtiva();
 }
@@ -120,9 +123,8 @@ function alterarData() {
   if (local) atualizarEndereco();
   atualizarDados();
 }
-function expandirTabela() {
-  limite = limite === 3 ? Infinity : 3;
-  mostrarTabela(registros, limite);
+function paginarTabela(deslocamento) {
+  paginaMedicoes = mostrarTabela(registros, paginaMedicoes + deslocamento);
 }
 function criarAbas() {
   document.querySelector('.abas-locais').replaceChildren(...localidades.map(item => {
@@ -140,7 +142,8 @@ function conectarControles() {
   elemento('local-proximo').addEventListener('click', () => navegar(1));
   elemento('data-historico').addEventListener('change', alterarData);
   elemento('recarregar').addEventListener('click', () => atualizarDados('atualizar'));
-  elemento('expandir-medicoes').addEventListener('click', expandirTabela);
+  elemento('medicoes-anterior').addEventListener('click', () => paginarTabela(-1));
+  elemento('medicoes-proxima').addEventListener('click', () => paginarTabela(1));
   document.querySelectorAll('button[disabled]').forEach(botao => { botao.disabled = false; });
 }
 window.addEventListener('popstate', () => { cancelarConsulta(); carregarEndereco(); atualizarDados(); });

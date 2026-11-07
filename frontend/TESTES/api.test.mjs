@@ -55,5 +55,6 @@ test('valores inválidos não viram zero ou NaN e datas sem fuso não são inven
   assert.deepEqual(normalizarHistorico([]), []);
   assert.throws(() => normalizarHistorico({}), /lista/);
   assert.match(situacaoLeitura(normalizarLeitura({ data_hora: '2020-01-01T00:00:00Z' })), /desatualizados/);
-  assert.ok(Object.values(estacoes).every(id => id === null));
+  assert.equal(estacoes.sorocaba, 1);
+  assert.ok(Object.entries(estacoes).every(([localidade, id]) => localidade === 'sorocaba' || id === null));
 });

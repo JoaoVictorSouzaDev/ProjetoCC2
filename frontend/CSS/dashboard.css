@@ -1,6 +1,9 @@
 .pagina-dashboard {
   font-feature-settings: 'tnum' 1;
 }
+.pagina-dashboard .barra-navegacao { justify-content: center; }
+.pagina-dashboard .marca { transition: color 180ms ease, transform 180ms ease; }
+.pagina-dashboard .marca:hover { color: var(--selo-texto); transform: translateY(-1px); }
 .dashboard-container { padding-top: 42px; padding-bottom: 56px;
   background-image: var(--brilho-pagina); background-repeat: no-repeat;
   background-size: 100% 660px; background-position: center 42px; }
@@ -39,6 +42,7 @@
 .pagina-dashboard #historico, #medicoes { margin-top: 28px; }
 .grade-dashboard { grid-template-columns: minmax(0, 2.2fr) minmax(0, 1fr); gap: 24px; }
 .grade-dashboard > * { min-width: 0; }
+.pagina-dashboard #medicoes .grade-dashboard { grid-template-columns: minmax(0, 1fr); }
 .cabecalho-grafico { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
 .cabecalho-grafico h3 { font-size: 18px; }
 .cabecalho-grafico p { margin-top: 4px; font-size: 11px; }
@@ -51,9 +55,6 @@
 #grafico .ponto { fill: var(--superficie); stroke: var(--destaque); stroke-width: 2; cursor: pointer; }
 #grafico .ponto:focus, #grafico .ponto:hover { fill: var(--destaque); stroke: var(--texto); stroke-width: 4; outline: none; }
 .painel-grafico .resumo-grafico { font-size: 11px; margin-top: 10px; }
-.dados-grafico { margin-top: 16px; }
-.dados-grafico summary { cursor: pointer; color: var(--destaque); font-size: 12px; padding: 8px 0; }
-.dados-grafico .rolagem-tabela { max-height: 250px; }
 .resumo-dashboard .destaque-resumo { margin-top: 18px; font-size: 13px; }
 .resumo-dashboard .destaque-resumo p { font-size: 12px; color: var(--selo-texto); margin-top: 8px; }
 .resumo-dashboard .ficha-projeto { line-height: 1.6; }
@@ -67,7 +68,9 @@
 .pagina-dashboard caption { text-align: left; color: var(--secundario); padding: 16px 20px; font-size: 11px; }
 .pagina-dashboard th { color: var(--secundario); font-weight: 500; background: var(--fundo); }
 .pagina-dashboard td, .pagina-dashboard th { padding: 16px 18px; border-bottom: 1px solid var(--borda); }
-.painel-tabela .link-destaque { border: 0; background: transparent; margin: 20px 20px 0; padding: 0; font-size: 12px; }
+.paginacao-medicoes { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin: 20px 20px 0; }
+.paginacao-medicoes p { margin: 0; color: var(--secundario); font-size: 12px; text-align: center; }
+.paginacao-medicoes button { flex-shrink: 0; }
 .pagina-dashboard .rodape { background: var(--superficie); }
 
 @media (max-width: 1150px) {
@@ -91,7 +94,9 @@
   .navegador-locais { gap: 4px; }
   .painel-grafico { padding: 20px 12px; }
   .cabecalho-grafico h3 { font-size: 16px; }
-    .pagina-dashboard .titulo-secao p { font-size: 11px; }
+  .pagina-dashboard .titulo-secao p { font-size: 11px; }
+  .paginacao-medicoes { gap: 8px; margin-inline: 12px; }
+  .paginacao-medicoes p { font-size: 11px; }
   #grafico { min-height: 140px; }
 }
 @media (max-width: 360px) {
@@ -117,7 +122,7 @@
 .botao-contorno { display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
 .painel-apoio, .metrica { background: var(--superficie); }
 .nota-unidade { font-size: 12px; margin-top: 12px; }
-.dados-grafico summary, .painel-tabela .link-destaque { min-height: 44px; }
+.painel-tabela .link-destaque { min-height: 44px; }
 .ficha-projeto dd, .cabecalho-dashboard strong { overflow-wrap: anywhere; }
 .filtro-data, .filtro-data input { min-width: 0; width: 100%; }
 .filtro-data { max-width: 180px; }

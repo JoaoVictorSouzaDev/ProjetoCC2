@@ -266,7 +266,7 @@ function conectarControles() {
 function iniciar() {
   criarCartoes();
   iniciarUmidadeCartoes();
-  escrever('contagem-localidades', `${localidades.length} localidades · dados da API`);
+  escrever('contagem-localidades', `${localidades.length} localidades`);
   document.querySelectorAll('[data-selecionar], #busca').forEach(item => { item.disabled = false; });
   criarPaginacao();
   atualizarLocalidade(localidades.find(local => local.id === selecionada));

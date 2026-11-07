@@ -1,4 +1,4 @@
-import { catalogoEstacoes } from './estacoes.js?v=20261105u';
+import { catalogoEstacoes } from './estacoes.js?v=20261107c';
 
 const amostras = Object.freeze([
   { id: 'sao-paulo', condicao: 'Parcialmente nublado',

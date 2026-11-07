@@ -6,22 +6,15 @@
   <meta name="description" content="Dashboards por localidade da Estação Ambiental IoT.">
   <title>Dashboards — Estação Ambiental IoT</title>
   <link rel="stylesheet" href="../CSS/painel.css?v=20261105v">
-  <link rel="stylesheet" href="../CSS/dashboard.css?v=20261105u">
-  <script type="module" src="../JAVA%20SCRIPT/dashboard.js?v=20261105v"></script>
+  <link rel="stylesheet" href="../CSS/dashboard.css?v=20261107b">
+  <script type="module" src="../JAVA%20SCRIPT/dashboard.js?v=20261107c"></script>
 </head>
 <body class="pagina-dashboard">
   <a class="pular-conteudo" href="#conteudo-dashboard">Ir para o dashboard</a>
   <header class="cabecalho">
     <div class="barra-navegacao">
-      <a class="marca" href="index.html" aria-label="AERIS — Estação Ambiental IoT">AERIS</a>
-      <nav aria-label="Navegação do dashboard">
-        <ul>
-          <li><a href="#dashboard" aria-current="location">Dashboard</a></li>
-          <li><a href="#historico">Histórico</a></li>
-          <li><a href="#estacao">Estação</a></li>
-          <li><a href="index.html#localidades">Locais</a></li>
-        </ul>
-      </nav>
+      <a class="marca" href="index.html" aria-label="Voltar para a seleção de localidades — AERIS"
+        title="Voltar para a seleção de localidades">AERIS</a>
     </div>
   </header>
   <main id="conteudo-dashboard" class="container dashboard-container">
@@ -45,8 +38,6 @@
           <p><strong id="nome-local">Selecione uma localidade</strong></p>
         </div>
         <div class="atualizacao">
-          <div>
-            <p>Última leitura: <time id="ultima-leitura">—</time></p></div>
           <button id="recarregar" class="botao-contorno" type="button" disabled>
             <svg class="icone" aria-hidden="true" focusable="false"><use href="../ASSETS/icones-dashboard.svg#refresh"></use></svg> Atualizar dados
           </button>
@@ -91,7 +82,6 @@
             </dd>
           </div>
         </dl>
-        <p class="nota-unidade">Qualidade do ar: valor bruto da API; unidade e calibração não informadas.</p>
       </section>
 
       <section id="historico" aria-labelledby="titulo-analises">
@@ -108,15 +98,6 @@
             <output id="leitura-grafico" class="leitura-grafico">Selecione um ponto para consultar a amostra.</output>
             <svg id="grafico" viewBox="0 0 800 280" role="group" aria-label="Gráfico de temperatura"></svg>
             <p id="resumo-grafico" class="resumo-grafico"></p>
-            <details class="dados-grafico">
-              <summary>Consultar dados do gráfico em tabela</summary>
-              <div class="rolagem-tabela" tabindex="0" role="region" aria-label="Dados do gráfico">
-                <table><caption id="legenda-serie">Leituras da estação</caption>
-                  <thead><tr><th scope="col">Data e hora (UTC−03)</th><th scope="col">Temperatura</th></tr></thead>
-                  <tbody id="tabela-serie"></tbody>
-                </table>
-              </div>
-            </details>
           </section>
           <aside class="painel-apoio resumo-dashboard" aria-labelledby="titulo-resumo">
             <h3 id="titulo-resumo">Resumo ambiental</h3>
@@ -144,22 +125,21 @@
                 <tbody id="registros-medicoes"></tbody>
               </table>
             </div>
-            <button id="expandir-medicoes" class="link-destaque" type="button" aria-expanded="false"
-              aria-controls="registros-medicoes" disabled>Ver todas as amostras</button>
+            <nav class="paginacao-medicoes" aria-label="Paginação das medições">
+              <button id="medicoes-anterior" class="botao-contorno" type="button"
+                aria-label="Página anterior" aria-controls="registros-medicoes" disabled>Anterior</button>
+              <p id="pagina-medicoes" aria-live="polite" aria-atomic="true">Nenhuma medição disponível.</p>
+              <button id="medicoes-proxima" class="botao-contorno" type="button"
+                aria-label="Próxima página" aria-controls="registros-medicoes" disabled>Próxima</button>
+            </nav>
           </div>
-          <section id="estacao" class="painel-apoio" aria-labelledby="titulo-estacao">
-            <h3 id="titulo-estacao">Sobre esta estação</h3>
-            <dl class="ficha-projeto">
-              <div><dt>Localidade</dt><dd id="estacao-local">—</dd></div>
-            </dl>
-          </section>
         </div>
       </section>
     </section>
     <p class="sr-only" id="anuncio-dashboard" role="status" aria-atomic="true"></p>
   </main>
   <footer class="rodape"><div class="container">
-    <p>Estação Ambiental IoT — Projeto AERIS</p><a href="index.html#localidades">Escolher outro local</a>
+    <p>Estação Ambiental IoT — Projeto AERIS</p>
   </div></footer>
 </body>
 </html>
