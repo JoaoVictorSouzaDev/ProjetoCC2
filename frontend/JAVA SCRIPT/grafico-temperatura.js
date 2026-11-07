@@ -1,4 +1,4 @@
-import { formatarData, periodos } from './dados-dashboards.js';
+import { formatarData } from './dados-dashboards.js';
 
 const namespace = 'http://www.w3.org/2000/svg';
 const numero = valor => valor.toLocaleString('pt-BR', { maximumFractionDigits: 1 });
@@ -15,14 +15,14 @@ function textoSvg(texto, atributos) {
   return elemento;
 }
 
-function calcularEscala(serie) {
+function calcularEscala(serie, largura) {
   const valores = serie.map(ponto => ponto.temperatura);
-  const minimo = Math.floor(Math.min(...valores)) - 2;
-  const maximo = Math.ceil(Math.max(...valores)) + 2;
+  const minimo = Math.floor(valores.reduce((minimo, valor) => Math.min(minimo, valor), Infinity)) - 2;
+  const maximo = Math.ceil(valores.reduce((maximo, valor) => Math.max(maximo, valor), -Infinity)) + 2;
   const inicio = Date.parse(serie[0].horario);
   const duracao = Date.parse(serie.at(-1).horario) - inicio;
-  return { minimo, maximo,
-    x: horario => 48 + ((Date.parse(horario) - inicio) / (duracao || 1)) * 720,
+  return { minimo, maximo, largura,
+    x: horario => 40 + ((Date.parse(horario) - inicio) / (duracao || 1)) * (largura - 68),
     y: valor => 232 - (valor - minimo) / (maximo - minimo) * 204,
   };
 }
@@ -31,8 +31,8 @@ function desenharGrade(svg, escala) {
   for (let linha = 0; linha < 5; linha++) {
     const valor = escala.minimo + (escala.maximo - escala.minimo) * linha / 4;
     const y = escala.y(valor);
-    svg.append(elementoSvg('line', { x1: 48, x2: 768, y1: y, y2: y, class: 'linha-grade' }));
-    svg.append(textoSvg(numero(valor), { x: 36, y: y + 4, 'text-anchor': 'end' }));
+    svg.append(elementoSvg('line', { x1: 40, x2: escala.largura - 28, y1: y, y2: y, class: 'linha-grade' }));
+    svg.append(textoSvg(numero(valor), { x: 32, y: y + 4, 'text-anchor': 'end' }));
   }
   svg.append(textoSvg('°C', { x: 12, y: 16 }));
 }
@@ -55,7 +55,7 @@ function desenharEixo(svg, contexto) {
 
 function exibirAmostra(ponto) {
   document.getElementById('leitura-grafico').textContent =
-    `${formatarData(ponto.horario)} (UTC−03) · ${numero(ponto.temperatura)} °C · Demonstrativo`;
+    `${formatarData(ponto.horario)} (UTC−03) · ${numero(ponto.temperatura)} °C`;
 }
 
 function navegarPontos(evento) {
@@ -75,7 +75,7 @@ function navegarPontos(evento) {
 function criarPonto(ponto, posicao) {
   const circulo = elementoSvg('circle', { cx: posicao.x, cy: posicao.y, r: 4,
     class: 'ponto', tabindex: posicao.indice === 0 ? 0 : -1, role: 'button',
-    'aria-label': `${formatarData(ponto.horario)}: ${numero(ponto.temperatura)} graus Celsius, demonstrativo`,
+    'aria-label': `${formatarData(ponto.horario)}: ${numero(ponto.temperatura)} graus Celsius`,
   });
   circulo.addEventListener('focus', () => exibirAmostra(ponto));
   circulo.addEventListener('pointerenter', () => exibirAmostra(ponto));
@@ -97,16 +97,40 @@ function desenharLinha(svg, contexto) {
 
 export function desenharGrafico(serie, contexto) {
   const svg = document.getElementById('grafico');
+  ultimaSerie = serie; ultimoContexto = contexto;
+  observarGrafico(svg);
+  const foco = [...svg.querySelectorAll('.ponto')].indexOf(document.activeElement);
   svg.replaceChildren();
-  svg.setAttribute('aria-label', `Temperatura de ${contexto.nome}, ${periodos[contexto.periodo]}. Dados demonstrativos.`);
+  svg.setAttribute('aria-label', `Temperatura de ${contexto.nome}, data selecionada.`);
   if (!serie.length) {
     document.getElementById('leitura-grafico').textContent = 'Nenhuma amostra disponível neste período.';
     return;
   }
-  const escala = calcularEscala(serie);
+  const largura = Math.max(220, Math.round(svg.parentElement.clientWidth - 40));
+  svg.setAttribute('viewBox', `0 0 ${largura} 280`);
+  const escala = calcularEscala(serie, largura);
   desenharGrade(svg, escala);
   desenharEixo(svg, { serie, escala, periodo: contexto.periodo });
   desenharLinha(svg, { serie, escala });
   svg.onkeydown = navegarPontos;
   exibirAmostra(serie.at(-1));
+  if (foco >= 0) {
+    const pontos = [...svg.querySelectorAll('.ponto')];
+    pontos.forEach(ponto => ponto.setAttribute('tabindex', '-1'));
+    const destino = pontos[Math.min(foco, pontos.length - 1)];
+    destino.setAttribute('tabindex', '0');
+    destino.focus({ preventScroll: true });
+  }
+}
+
+let ultimaSerie = [], ultimoContexto, observador, larguraAnterior;
+function observarGrafico(svg) {
+  if (observador) return;
+  observador = new ResizeObserver(([entrada]) => {
+    const largura = entrada.contentRect.width;
+    if (largura === larguraAnterior) return;
+    larguraAnterior = largura;
+    if (ultimoContexto) desenharGrafico(ultimaSerie, ultimoContexto);
+  });
+  observador.observe(svg.parentElement);
 }

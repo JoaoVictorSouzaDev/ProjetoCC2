@@ -1,14 +1,4 @@
-@font-face {
-  font-family: Inter;
-  font-style: normal;
-  font-weight: 100 900;
-  font-display: swap;
-  src: url('../ASSETS/fontes/InterVariable.woff2') format('woff2');
-}
-
 .pagina-dashboard {
-  --texto: #eaf2fa;
-  --intervalo-dashboard: 28px;
   font-feature-settings: 'tnum' 1;
 }
 .dashboard-container { padding-top: 42px; padding-bottom: 56px;
@@ -26,9 +16,9 @@
 .abas-locais button[aria-selected="true"] { background: var(--destaque-escuro); border-color: var(--destaque);
   color: var(--destaque); }
 .botao-contorno { background: transparent; border: 1px solid var(--borda); border-radius: 8px;
-  padding: 10px 14px; font-size: 12px; min-height: 40px; }
+  padding: 10px 14px; font-size: 12px; min-height: 44px; }
 .botao-contorno:hover, .abas-locais button:hover { border-color: var(--destaque); }
-.trocar-local { font-size: 26px; width: 40px; padding: 0; flex-shrink: 0; }
+.trocar-local { font-size: 26px; width: 44px; padding: 0; flex-shrink: 0; }
 .cabecalho-dashboard { display: flex; align-items: center; justify-content: space-between; gap: 28px;
   min-height: 100px; margin-bottom: 28px; }
 .cabecalho-dashboard p { font-size: 14px; margin-top: 6px; }
@@ -36,7 +26,6 @@
 .atualizacao { display: flex; align-items: center; gap: 16px; }
 .atualizacao p { font-size: 11px; max-width: 240px; }
 .atualizacao button { white-space: nowrap; }
-.selo[data-tom="atencao"] { color: #f3c878; background: #3d3020; }
 .pagina-dashboard .titulo-secao { margin-bottom: 24px; }
 .indicadores-dashboard { gap: 28px; }
 .indicadores-dashboard .metrica { min-height: 188px; padding: 20px; }
@@ -47,20 +36,12 @@
   stroke-linecap: round; stroke-linejoin: round; }
 .indicadores-dashboard .medida { font-size: 34px; line-height: 1.2; font-weight: 500; }
 .indicadores-dashboard .unidade { font-size: 14px; color: var(--secundario); }
-.indicadores-dashboard .contexto-metrica { font-size: 11px; font-weight: 400; margin-top: 14px; color: var(--secundario); }
-.contexto-metrica::before { content: ''; display: inline-block; width: 6px; height: 6px; border-radius: 50%;
-  background: var(--destaque); margin-right: 8px; }
 .pagina-dashboard #historico, #medicoes { margin-top: 28px; }
 .grade-dashboard { grid-template-columns: minmax(0, 2.2fr) minmax(0, 1fr); gap: 24px; }
 .grade-dashboard > * { min-width: 0; }
 .cabecalho-grafico { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
 .cabecalho-grafico h3 { font-size: 18px; }
 .cabecalho-grafico p { margin-top: 4px; font-size: 11px; }
-.periodos { display: flex; gap: 6px; }
-.periodos button { background: transparent; border: 1px solid var(--borda); border-radius: 6px;
-  color: var(--secundario); padding: 8px 9px; white-space: nowrap; font-size: 11px; }
-.periodos button[aria-pressed="true"] { color: var(--destaque); border-color: var(--destaque-escuro);
-  background: var(--destaque-escuro); }
 .painel-grafico { padding: 24px 20px; }
 .leitura-grafico { display: block; min-height: 22px; margin-top: 20px; color: var(--texto); font-size: 12px; }
 #grafico { display: block; width: 100%; height: auto; min-height: 190px; margin-top: 12px; overflow: visible; }
@@ -74,7 +55,7 @@
 .dados-grafico summary { cursor: pointer; color: var(--destaque); font-size: 12px; padding: 8px 0; }
 .dados-grafico .rolagem-tabela { max-height: 250px; }
 .resumo-dashboard .destaque-resumo { margin-top: 18px; font-size: 13px; }
-.resumo-dashboard .destaque-resumo p { font-size: 12px; color: #b5ebe2; margin-top: 8px; }
+.resumo-dashboard .destaque-resumo p { font-size: 12px; color: var(--selo-texto); margin-top: 8px; }
 .resumo-dashboard .ficha-projeto { line-height: 1.6; }
 .resumo-dashboard .nota-resumo { color: var(--secundario); font-size: 11px; margin-top: 24px; }
 .pagina-dashboard .ficha-projeto { font-size: 12px; }
@@ -87,9 +68,7 @@
 .pagina-dashboard th { color: var(--secundario); font-weight: 500; background: var(--fundo); }
 .pagina-dashboard td, .pagina-dashboard th { padding: 16px 18px; border-bottom: 1px solid var(--borda); }
 .painel-tabela .link-destaque { border: 0; background: transparent; margin: 20px 20px 0; padding: 0; font-size: 12px; }
-.aviso-dashboard { margin-top: 28px; }
 .pagina-dashboard .rodape { background: var(--superficie); }
-#erro-dashboard { margin-bottom: 24px; }
 
 @media (max-width: 1150px) {
   .cabecalho-dashboard { flex-wrap: wrap; }
@@ -102,7 +81,7 @@
   .pagina-dashboard h2 { font-size: 20px; }
   .atualizacao { align-items: flex-start; flex-direction: column; gap: 12px; }
   .cabecalho-dashboard { gap: 20px; }
-  .indicadores-dashboard { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .indicadores-dashboard { gap: 12px; }
   .indicadores-dashboard .metrica { padding: 16px; min-height: 182px; }
   .indicadores-dashboard dt { font-size: 11px; flex-wrap: wrap; gap: 8px; }
   .indicadores-dashboard .medida { font-size: 27px; }
@@ -112,11 +91,44 @@
   .navegador-locais { gap: 4px; }
   .painel-grafico { padding: 20px 12px; }
   .cabecalho-grafico h3 { font-size: 16px; }
-  .periodos button { min-height: 40px; padding-inline: 12px; }
-  .pagina-dashboard .titulo-secao p { font-size: 11px; }
+    .pagina-dashboard .titulo-secao p { font-size: 11px; }
   #grafico { min-height: 140px; }
 }
 @media (max-width: 360px) {
-  .indicadores-dashboard { grid-template-columns: 1fr; }
   .indicadores-dashboard dt { flex-wrap: nowrap; }
+}
+
+.indicadores-dashboard { display: flex; flex-wrap: wrap; justify-content: center; }
+.indicadores-dashboard .metrica { flex: 0 1 calc((100% - 56px) / 3); min-width: 0; }
+.indicadores-dashboard .medida { overflow-wrap: anywhere; }
+.medida [data-indisponivel] { font-size: 16px; }
+.filtro-data { display: grid; gap: 6px; font-size: 12px; }
+.filtro-data input { background: var(--fundo); color: var(--texto); border: 1px solid var(--borda);
+  border-radius: 6px; padding: 10px; max-width: 100%; }
+[aria-busy="true"] .medida { opacity: .45; }
+@media (max-width: 760px) {
+  .indicadores-dashboard .metrica { flex-basis: calc((100% - 12px) / 2); }
+}
+@media (max-width: 360px) {
+  .indicadores-dashboard .metrica { flex-basis: 100%; }
+}
+
+.abas-locais { min-width: 0; }
+.botao-contorno { display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+.painel-apoio, .metrica { background: var(--superficie); }
+.nota-unidade { font-size: 12px; margin-top: 12px; }
+.dados-grafico summary, .painel-tabela .link-destaque { min-height: 44px; }
+.ficha-projeto dd, .cabecalho-dashboard strong { overflow-wrap: anywhere; }
+.filtro-data, .filtro-data input { min-width: 0; width: 100%; }
+.filtro-data { max-width: 180px; }
+@media (max-width: 760px) {
+  .cabecalho-dashboard > *, .atualizacao { min-width: 0; max-width: 100%; }
+  .pagina-dashboard .ficha-projeto > div { flex-wrap: wrap; }
+  .pagina-dashboard .ficha-projeto dd { max-width: 100%; }
+}
+
+.indicadores-dashboard .detalhes-precipitacao { display: grid; gap: 4px; margin-top: 12px;
+  color: var(--secundario); font-size: 11px; font-weight: 400; line-height: 1.4; overflow-wrap: anywhere; }
+@media (min-width: 761px) and (max-width: 1000px) {
+  .indicadores-dashboard .metrica { flex-basis: calc((100% - 28px) / 2); }
 }

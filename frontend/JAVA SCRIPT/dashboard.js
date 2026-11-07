@@ -1,184 +1,150 @@
-import { dashboards, obterDashboard, obterSerie, resumirSerie, formatarData, periodos } from './dados-dashboards.js';
-import { moverSelecao, unidades } from './dados-demonstrativos.js';
-import { desenharGrafico } from './grafico-temperatura.js';
+import { catalogoEstacoes as localidades, moverSelecao } from './estacoes.js?v=20261105u';
+import { consultarEstacao } from './consulta-estacao.js?v=20261105u';
+import { estadoDaFalha, estados } from './estados.js?v=20261105v';
+import { INTERVALO_ATUALIZACAO_MS } from './configuracao-api.js';
+import { politicaInicialDeLeitura } from './leitura-compartilhada.js?v=20261105u';
+import { elemento, escrever, mostrarSituacao, mostrarLeitura, mostrarHistorico, mostrarTabela } from './dashboard-interface.js?v=20261105v';
 
-let local = obterDashboard('sorocaba');
-let periodo = '24h';
-let registrosExpandidos = false;
-const numero = valor => valor.toLocaleString('pt-BR', { maximumFractionDigits: 1 });
-const elemento = id => document.getElementById(id);
-const escrever = (id, texto) => { elemento(id).textContent = texto; };
-
+let local, consulta, timer;
+let registros = [];
+let limite = 3;
+const hoje = () => new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Sao_Paulo' }).format(new Date());
+function contexto() { return { nome: local?.nome || 'Localidade', data: elemento('data-historico').value, limite }; }
+function limparDados() {
+  registros = [];
+  mostrarLeitura(null);
+  mostrarHistorico([], { ...contexto(), situacao: 'loading' });
+}
 function carregarEndereco() {
-  const parametros = new URLSearchParams(location.search);
-  const solicitado = parametros.get('local') || 'sorocaba';
-  local = obterDashboard(solicitado) || obterDashboard('sorocaba');
-  const escolhido = parametros.get('periodo') || '24h';
-  periodo = Object.hasOwn(periodos, escolhido) ? escolhido : '24h';
-  const invalido = local.id !== solicitado || periodo !== escolhido;
-  elemento('erro-dashboard').hidden = !invalido;
-  escrever('erro-dashboard', 'Localidade ou período não encontrado. Exibindo uma seleção demonstrativa disponível.');
+  const params = new URLSearchParams(location.search);
+  local = localidades.find(item => item.id === (params.get('local') || 'sorocaba'));
+  elemento('data-historico').value = params.get('data') || hoje();
+  if (!elemento('data-historico').value) elemento('data-historico').value = hoje();
+  atualizarSelecao();
 }
-
 function atualizarEndereco() {
-  const endereco = new URL(location.href);
-  endereco.searchParams.set('local', local.id);
-  endereco.searchParams.set('periodo', periodo);
-  history.pushState(null, '', endereco);
+  const url = new URL(location.href);
+  url.searchParams.set('local', local.id);
+  url.searchParams.set('data', elemento('data-historico').value);
+  url.searchParams.delete('periodo');
+  history.pushState(null, '', url);
 }
-
-function atualizarAbas() {
-  document.querySelectorAll('[data-local]').forEach(aba => {
-    const ativa = aba.dataset.local === local.id;
+function atualizarSelecao() {
+  document.querySelectorAll('[role="tab"]').forEach(aba => {
+    const ativa = aba.dataset.local === local?.id;
     aba.setAttribute('aria-selected', String(ativa));
-    aba.tabIndex = ativa ? 0 : -1;
+    aba.tabIndex = ativa || (!local && aba.dataset.local === localidades[0].id) ? 0 : -1;
   });
-  elemento('dashboard').setAttribute('aria-labelledby', `aba-${local.id}`);
-  elemento('dashboard').dataset.local = local.id;
-  document.querySelectorAll('[data-periodo]').forEach(botao => {
-    botao.setAttribute('aria-pressed', String(botao.dataset.periodo === periodo));
-  });
+  escrever('nome-local', local ? `${local.nome} — ${local.uf}` : 'Localidade não encontrada');
+  escrever('estacao-local', local?.nome || 'Indisponível');
+  document.title = `${local?.nome || 'Localidade'} — AERIS`;
+  elemento('dashboard').setAttribute('aria-labelledby', local ? `aba-${local.id}` : 'titulo-dashboard');
+  requestAnimationFrame(revelarAbaAtiva);
 }
-
-function atualizarCabecalho() {
-  escrever('nome-local', `${local.nome} — ${local.uf}`);
-  escrever('condicao-local', ` · ${local.condicao}`);
-  escrever('estado-local', local.estado);
-  elemento('estado-local').dataset.tom = local.tom;
-  escrever('ultima-leitura', `${formatarData(local.leitura)} (UTC−03)`);
-  elemento('ultima-leitura').dateTime = local.leitura;
-  document.title = `${local.nome} — Dashboard | Estação Ambiental IoT`;
+function revelarAbaAtiva() {
+  const abas = document.querySelector('.abas-locais');
+  const ativa = abas.querySelector('[aria-selected="true"]');
+  if (!ativa) return;
+  const area = abas.getBoundingClientRect();
+  const aba = ativa.getBoundingClientRect();
+  abas.scrollTo({ left: abas.scrollLeft + aba.left + aba.width / 2 - area.left - area.width / 2,
+    behavior: 'instant' });
 }
-
-function atualizarMetricas() {
-  const variacao = resumirSerie(local.series['24h']).variacao;
-  Object.keys(unidades).forEach(campo => escrever(`metrica-${campo}`, numero(local[campo])));
-  escrever('contexto-temperatura', `${variacao >= 0 ? '+' : ''}${numero(variacao)} °C em 24h · exemplo`);
-  escrever('contexto-umidade', 'Umidade relativa · exemplo');
-  escrever('contexto-pressao', 'Pressão local · exemplo');
-  escrever('contexto-ar', 'Partículas finas · sem classificação de risco');
-  escrever('contexto-luminosidade', 'Iluminância da última amostra');
-  escrever('contexto-ruido', 'Nível sonoro com ponderação A');
+function cancelarConsulta() {
+  clearTimeout(timer); consulta?.abort(); consulta = null;
+  elemento('recarregar').disabled = false;
+  elemento('dashboard').setAttribute('aria-busy', 'false');
 }
-
-function atualizarEstacao() {
-  const campos = { local: `${local.nome} — ${local.uf}`, estado: local.estado,
-    horario: `${formatarData(local.leitura)} (UTC−03)`, intervalo: local.intervalo,
-    sensores: String(local.sensores), dispositivo: local.dispositivo };
-  Object.entries(campos).forEach(([campo, valor]) => escrever(`estacao-${campo}`, valor));
-  escrever('resumo-condicao', `${local.condicao} · ${local.nome}`);
-  escrever('resumo-texto', local.resumo);
-  escrever('resumo-umidade', `${numero(local.umidade)} %`);
-  escrever('resumo-ruido', `${numero(local.ruido)} dB(A)`);
+function finalizarConsulta(controle) {
+  if (consulta !== controle) return;
+  consulta = null;
+  elemento('dashboard').setAttribute('aria-busy', 'false');
+  timer = setTimeout(() => atualizarDados('atualizar'), INTERVALO_ATUALIZACAO_MS);
 }
-
-function criarLinha(valores) {
-  const linha = document.createElement('tr');
-  valores.forEach(valor => {
-    const celula = document.createElement('td');
-    celula.textContent = valor;
-    linha.append(celula);
-  });
-  return linha;
+function aplicarResultados(resultado) {
+  registros = resultado.historico;
+  mostrarLeitura(resultado.leitura);
+  const situacao = resultado.falhaHistorico || (registros.length ? 'success' : 'empty');
+  mostrarHistorico(registros, { ...contexto(), situacao });
+  const estado = { ...resultado.estado };
+  if (resultado.falhaHistorico && ['success', 'stale'].includes(estado.tipo)) {
+    estado.texto = `${estado.texto || estados[estado.tipo].texto} O histórico não pôde ser atualizado.`;
+  }
+  mostrarSituacao(estado);
 }
-
-function atualizarTabelaSerie(serie) {
-  const linhas = serie.map(ponto => criarLinha([formatarData(ponto.horario), `${numero(ponto.temperatura)} °C`]));
-  elemento('tabela-serie').replaceChildren(...linhas);
-  escrever('legenda-serie', `${local.nome} · ${periodos[periodo]} · dados demonstrativos (UTC−03)`);
+function prepararConsulta() {
+  limparDados();
+  if (!local || !local.apiId) {
+    mostrarHistorico([], { ...contexto(), situacao: 'unconfigured' });
+    mostrarSituacao(local ? { tipo: 'empty' } : { tipo: 'error',
+      titulo: 'Localidade não encontrada', texto: 'Selecione uma das cidades disponíveis para continuar.' });
+    elemento('recarregar').disabled = true;
+    return null;
+  }
+  const controle = new AbortController(); consulta = controle;
+  elemento('dashboard').setAttribute('aria-busy', 'true');
+  mostrarSituacao({ tipo: 'loading' });
+  return controle;
 }
-
-function atualizarHistorico() {
-  const serie = obterSerie(local, periodo);
-  const resumo = resumirSerie(serie);
-  escrever('titulo-grafico', `Temperatura — ${periodos[periodo]}`);
-  escrever('subtitulo-grafico', `${local.nome} · ${serie.length} amostras demonstrativas`);
-  escrever('resumo-grafico', `${serie.length} amostras · mínimo ${numero(resumo.minima)} °C · ` +
-    `máximo ${numero(resumo.maxima)} °C. Horários em UTC−03.`);
-  escrever('resumo-minima', `${numero(resumo.minima)} °C`);
-  escrever('resumo-maxima', `${numero(resumo.maxima)} °C`);
-  desenharGrafico(serie, { nome: local.nome, periodo });
-  atualizarTabelaSerie(serie);
+async function atualizarDados(politica = 'reutilizar') {
+  if (consulta) return;
+  clearTimeout(timer);
+  const controle = prepararConsulta();
+  if (!controle) return;
+  try {
+    const resultado = await consultarEstacao(local, { data: elemento('data-historico').value, signal: controle.signal, politica });
+    if (consulta === controle) aplicarResultados(resultado);
+  } catch (erro) {
+    if (consulta !== controle) return;
+    mostrarSituacao(estadoDaFalha(erro));
+    mostrarHistorico([], { ...contexto(), situacao: 'error' });
+  } finally { finalizarConsulta(controle); }
 }
-
-function atualizarMedicoes() {
-  const registros = [...local.registros].reverse().slice(0, registrosExpandidos ? local.registros.length : 3);
-  const linhas = registros.map(item => criarLinha([formatarData(item.horario),
-    `${numero(item.temperatura)} °C`, `${numero(item.umidade)} %`, `${numero(item.pressao)} hPa`,
-    `${numero(item.ar)} µg/m³`]));
-  elemento('registros-medicoes').replaceChildren(...linhas);
-  escrever('legenda-medicoes', `${local.nome} · medições fictícias · UTC−03`);
-  escrever('expandir-medicoes', registrosExpandidos ? 'Mostrar apenas as últimas 3 amostras ↑' : 'Ver todas as amostras →');
-  elemento('expandir-medicoes').setAttribute('aria-expanded', String(registrosExpandidos));
-}
-
-function renderizar() {
-  atualizarAbas();
-  atualizarCabecalho();
-  atualizarMetricas();
-  atualizarEstacao();
-  atualizarHistorico();
-  atualizarMedicoes();
-  escrever('anuncio-dashboard', `Dashboard de ${local.nome} atualizado. ${periodos[periodo]}. Dados demonstrativos.`);
-}
-
 function selecionarLocal(id) {
-  const escolhido = obterDashboard(id);
-  if (!escolhido) return;
-  local = escolhido;
-  elemento('erro-dashboard').hidden = true;
-  renderizar();
-  atualizarEndereco();
-  elemento(`aba-${local.id}`).scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'instant' });
+  cancelarConsulta(); local = localidades.find(item => item.id === id); limite = 3;
+  atualizarSelecao(); atualizarEndereco(); atualizarDados();
+  revelarAbaAtiva();
 }
-
-function navegarLocal(deslocamento) {
-  selecionarLocal(moverSelecao(dashboards, local.id, deslocamento));
-}
-
-function tecladoLocal(evento) {
-  if (evento.key === 'ArrowRight') navegarLocal(1);
-  else if (evento.key === 'ArrowLeft') navegarLocal(-1);
-  else if (evento.key === 'Home') selecionarLocal(dashboards[0].id);
-  else if (evento.key === 'End') selecionarLocal(dashboards.at(-1).id);
+function navegar(deslocamento) { selecionarLocal(moverSelecao(localidades, local?.id, deslocamento)); }
+function teclado(evento) {
+  const destinos = { ArrowRight: 1, ArrowLeft: -1 };
+  if (evento.key in destinos) navegar(destinos[evento.key]);
+  else if (evento.key === 'Home') selecionarLocal(localidades[0].id);
+  else if (evento.key === 'End') selecionarLocal(localidades.at(-1).id);
   else return;
-  evento.preventDefault();
-  elemento(`aba-${local.id}`).focus({ preventScroll: true });
+  evento.preventDefault(); elemento(`aba-${local.id}`).focus();
 }
-
-function selecionarPeriodo(evento) {
-  const botao = evento.target.closest('[data-periodo]');
-  if (!botao) return;
-  periodo = botao.dataset.periodo;
-  atualizarAbas();
-  atualizarHistorico();
-  atualizarEndereco();
-  escrever('anuncio-dashboard', `${local.nome}: histórico dos ${periodos[periodo]}, demonstrativo.`);
+function alterarData() {
+  if (!elemento('data-historico').reportValidity()) return;
+  cancelarConsulta();
+  if (local) atualizarEndereco();
+  atualizarDados();
 }
-
-function recarregarExemplo() {
-  renderizar();
-  escrever('anuncio-dashboard', `Exemplo de ${local.nome} recarregado. Nenhum sensor foi consultado; horários preservados.`);
-  escrever('subtitulo-grafico', `${local.nome} · exemplo recarregado, sem novas leituras`);
+function expandirTabela() {
+  limite = limite === 3 ? Infinity : 3;
+  mostrarTabela(registros, limite);
 }
-
+function criarAbas() {
+  document.querySelector('.abas-locais').replaceChildren(...localidades.map(item => {
+    const aba = document.createElement('button');
+    aba.type = 'button'; aba.id = `aba-${item.id}`; aba.dataset.local = item.id;
+    aba.setAttribute('role', 'tab'); aba.setAttribute('aria-controls', 'dashboard');
+    aba.textContent = item.nome;
+    return aba;
+  }));
+}
 function conectarControles() {
-  document.querySelectorAll('[data-local]').forEach(aba => {
-    aba.addEventListener('click', () => selecionarLocal(aba.dataset.local));
-  });
-  document.querySelector('.abas-locais').addEventListener('keydown', tecladoLocal);
-  elemento('local-anterior').addEventListener('click', () => navegarLocal(-1));
-  elemento('local-proximo').addEventListener('click', () => navegarLocal(1));
-  document.querySelector('.periodos').addEventListener('click', selecionarPeriodo);
-  elemento('recarregar').addEventListener('click', recarregarExemplo);
-  elemento('expandir-medicoes').addEventListener('click', () => {
-    registrosExpandidos = !registrosExpandidos;
-    atualizarMedicoes();
-  });
-  window.addEventListener('popstate', () => { carregarEndereco(); renderizar(); });
+  document.querySelectorAll('[role="tab"]').forEach(aba => aba.addEventListener('click', () => selecionarLocal(aba.dataset.local)));
+  document.querySelector('.abas-locais').addEventListener('keydown', teclado);
+  elemento('local-anterior').addEventListener('click', () => navegar(-1));
+  elemento('local-proximo').addEventListener('click', () => navegar(1));
+  elemento('data-historico').addEventListener('change', alterarData);
+  elemento('recarregar').addEventListener('click', () => atualizarDados('atualizar'));
+  elemento('expandir-medicoes').addEventListener('click', expandirTabela);
   document.querySelectorAll('button[disabled]').forEach(botao => { botao.disabled = false; });
 }
-
-carregarEndereco();
-renderizar();
-conectarControles();
+window.addEventListener('popstate', () => { cancelarConsulta(); carregarEndereco(); atualizarDados(); });
+window.addEventListener('pagehide', cancelarConsulta);
+window.addEventListener('pageshow', evento => { if (evento.persisted) atualizarDados(); });
+criarAbas(); carregarEndereco(); conectarControles(); atualizarDados(politicaInicialDeLeitura());
+new ResizeObserver(revelarAbaAtiva).observe(document.querySelector('.abas-locais'));
