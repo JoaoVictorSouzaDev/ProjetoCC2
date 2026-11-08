@@ -1,8 +1,9 @@
 import { catalogoEstacoes as localidades } from './estacoes.js?v=20261107c';
 import { icone } from './icones.js?v=20261105u';
 function medicao(titulo, simbolo, atributo, id, descricao) {
-  return `<div><dt>${icone(simbolo)}${titulo}</dt><dd data-${atributo}="${id}"
-    aria-describedby="${descricao}-${id}">Indisponível</dd>
+  return `<div data-medicao data-campo="${atributo}"><dt>${icone(simbolo)}${titulo}</dt><dd data-${atributo}="${id}"
+    aria-describedby="${descricao}-${id} aviso-${atributo}-${id}">Indisponível</dd>
+    <dd class="aviso-medicao" id="aviso-${atributo}-${id}" hidden></dd>
     <dd class="origem-medicao" id="${descricao}-${id}">Aguardando API</dd></div>`;
 }
 function conteudo(local) {

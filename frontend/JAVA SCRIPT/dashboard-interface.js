@@ -1,9 +1,10 @@
 import { mostrarEstado } from './estados-interface.js?v=20261107c';
 import { icone } from './icones.js?v=20261105u';
-import { campos, numero, formatarHorario, classificar } from './leituras.js?v=20261105u';
+import { campos, numero, formatarHorario, classificar } from './leituras.js?v=20261108b';
 import { desenharGrafico } from './grafico-temperatura.js?v=20261105u';
 import { apresentarPrecipitacao } from './precipitacao.js?v=20261105u';
 import { apresentarUmidade } from './umidade.js?v=20261105u';
+import { mostrarAvisoMedicao, mostrarDicaMedicao } from './avisos-interface.js?v=20261108c';
 let precipitacaoAtual = null;
 export const elemento = id => document.getElementById(id);
 export const escrever = (id, texto) => { elemento(id).textContent = texto; };
@@ -40,6 +41,10 @@ export function mostrarLeitura(item) {
     elemento(`metrica-${campo}`).toggleAttribute('data-indisponivel', !Number.isFinite(item?.[campo]));
   });
   escrever('unidade-umidade', umidade.unidade);
+  mostrarDicaMedicao(elemento('metrica-temperatura'), 'temperatura', item?.temperatura);
+  mostrarDicaMedicao(elemento('metrica-umidade'), 'umidade', item?.umidade);
+  mostrarAvisoMedicao(elemento('metrica-umidade'), 'umidade', item?.umidade);
+  mostrarAvisoMedicao(elemento('metrica-ar'), 'ar', item?.ar);
   elemento('metrica-umidade').dataset.horario = item?.horario || '';
   const nota = document.querySelector('.nota-unidade');
   if (nota) nota.dataset.leituraDisponivel = String(Number.isFinite(item?.ar));

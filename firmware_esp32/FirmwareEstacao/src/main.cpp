@@ -12,7 +12,7 @@ const char* API_URL = "http://192.168.1.104:8000/api/leituras";
 
 // CONFIGURAÇÕES DA ESTAÇÃO
 const int ESTACAO_ID = 1;
-const unsigned long INTERVALO_LEITURA_MS = 5000; // Alterado para 5 segundos
+const unsigned long INTERVALO_LEITURA_MS = 300000; // Alterado para 5 minutos
 
 // MAPEAMENTO DE PINOS E SENSORES
 #define PIN_DHT22 4

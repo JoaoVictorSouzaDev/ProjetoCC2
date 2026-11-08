@@ -3,13 +3,14 @@ import { obterLeituraCompartilhada, politicaInicialDeLeitura } from './leitura-c
 import { normalizarLeitura, formatarHorario, numero } from './leituras.js?v=20261105u';
 import { apresentarUmidade } from './umidade.js?v=20261105u';
 import { estadoDaLeitura, estadoDaFalha } from './estados.js?v=20261105u';
+import { mostrarAvisoMedicao } from './avisos-interface.js?v=20261108a';
 import { INTERVALO_ATUALIZACAO_MS } from './configuracao-api.js';
 let timer, atualizando;
 function mostrar(estacao, resultado) {
   const leitura = resultado.leitura;
   const valor = seletor => document.querySelector(`[data-${seletor}="${estacao.id}"]`);
   const origem = tipo => document.getElementById(`origem-${tipo}-${estacao.id}`);
-  const textos = { success: 'API', stale: 'API · desatualizado', empty: 'Sem leitura',
+  const textos = { success: '', stale: '', empty: 'Sem leitura',
     error: 'Falha na consulta', offline: 'Serviço inacessível' };
   const situacao = textos[resultado.estado.tipo];
   const horario = formatarHorario(leitura?.horario);
@@ -18,9 +19,11 @@ function mostrar(estacao, resultado) {
   valor('origem-temperatura').textContent = situacao;
   const umidade = valor('umidade');
   umidade.textContent = apresentarUmidade(leitura?.umidade).texto;
+  mostrarAvisoMedicao(umidade, 'umidade', leitura?.umidade);
   origem('umidade').textContent = situacao;
   const qualidadeAr = valor('qualidade-ar');
   qualidadeAr.textContent = Number.isFinite(leitura?.ar) ? `${numero(leitura.ar)} %` : 'Indisponível';
+  mostrarAvisoMedicao(qualidadeAr, 'ar', leitura?.ar);
   origem('ar').textContent = situacao;
   const pressao = valor('pressao');
   pressao.textContent = numero(leitura?.pressao);

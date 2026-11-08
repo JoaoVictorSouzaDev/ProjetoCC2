@@ -1,7 +1,7 @@
-import { criarCartoes } from './cartoes.js?v=20261105u';
+import { criarCartoes } from './cartoes.js?v=20261108b';
 import { localidades, filtrarLocalidades } from './dados-demonstrativos.js?v=20261105u';
 
-import { iniciarUmidadeCartoes } from './umidade-cartoes.js?v=20261105u';
+import { iniciarUmidadeCartoes } from './umidade-cartoes.js?v=20261108c';
 
 const dashboardPorLocal = Object.fromEntries(localidades.map(local => [local.id, local.rota]));
 

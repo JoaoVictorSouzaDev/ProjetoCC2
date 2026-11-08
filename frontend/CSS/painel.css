@@ -117,8 +117,29 @@ nav a:hover, nav a[aria-current] { background: var(--destaque-escuro); color: va
 .detalhes-localidade { display: flex; flex: 1; flex-direction: column; gap: 16px; padding: 20px 24px 24px; }
 .resumo-localidade { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
 .resumo-localidade div { min-width: 0; background: var(--superficie-interna); border-radius: 8px; padding: 8px 10px; }
+.resumo-localidade [data-severidade], .indicadores-dashboard .metrica[data-severidade] {
+  background: light-dark(#fff4cc, #463a18);
+  box-shadow: inset 0 0 0 1px light-dark(#d19b16, #d8ae45);
+}
+.resumo-localidade [data-severidade="Crítico"], .resumo-localidade [data-severidade="Emergência"],
+.indicadores-dashboard .metrica[data-severidade="Crítico"],
+.indicadores-dashboard .metrica[data-severidade="Emergência"] {
+  background: light-dark(#fde8e8, #3c1f29);
+  box-shadow: inset 0 0 0 1px light-dark(#c33b3b, #b85b65);
+}
+.aviso-medicao { color: light-dark(#725000, #ffe6a3); font-size: 10px; font-weight: 600; }
+.resumo-localidade [data-severidade="Crítico"] .aviso-medicao,
+.resumo-localidade [data-severidade="Emergência"] .aviso-medicao,
+.indicadores-dashboard .metrica[data-severidade="Crítico"] .aviso-medicao,
+.indicadores-dashboard .metrica[data-severidade="Emergência"] .aviso-medicao {
+  color: light-dark(#8f2020, #ffd1d1);
+}
 .resumo-localidade dt { font-size: 11px; color: var(--secundario); overflow-wrap: anywhere; }
 .resumo-localidade dd { font-size: 14px; overflow-wrap: anywhere; }
+.resumo-localidade .aviso-medicao { font-size: 10px; }
+.resumo-localidade [data-campo="qualidade-ar"] .aviso-medicao { font-size: 10px; }
+.indicadores-dashboard [data-campo="umidade"] .aviso-medicao { font-size: 20px; }
+.indicadores-dashboard [data-campo="qualidade-ar"] .aviso-medicao { font-size: 20px; }
 @media (max-width: 360px) {
   .resumo-localidade { grid-template-columns: minmax(0, 1fr); }
 }

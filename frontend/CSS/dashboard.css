@@ -39,6 +39,15 @@
   stroke-linecap: round; stroke-linejoin: round; }
 .indicadores-dashboard .medida { font-size: 34px; line-height: 1.2; font-weight: 500; }
 .indicadores-dashboard .unidade { font-size: 14px; color: var(--secundario); }
+.indicadores-dashboard .dica-medicao {
+  margin-top: 8px;
+  font-size: 12px;
+  font-weight: 450;
+  line-height: 1.4;
+}
+.indicadores-dashboard .dica-medicao[data-tom="quente"] { color: light-dark(#9a4b08, #ffc078); }
+.indicadores-dashboard .dica-medicao[data-tom="frio"] { color: light-dark(#17618f, #8ccfff); }
+.indicadores-dashboard .dica-medicao[data-tom="neutro"] { color: var(--secundario); }
 .pagina-dashboard #historico, #medicoes { margin-top: 28px; }
 .grade-dashboard { grid-template-columns: minmax(0, 2.2fr) minmax(0, 1fr); gap: 24px; }
 .grade-dashboard > * { min-width: 0; }
@@ -106,6 +115,7 @@
 .indicadores-dashboard { display: flex; flex-wrap: wrap; justify-content: center; }
 .indicadores-dashboard .metrica { flex: 0 1 calc((100% - 56px) / 3); min-width: 0; }
 .indicadores-dashboard .medida { overflow-wrap: anywhere; }
+.indicadores-dashboard .aviso-medicao { margin-top: 8px;}
 .medida [data-indisponivel] { font-size: 16px; }
 .filtro-data { display: grid; gap: 6px; font-size: 12px; }
 .filtro-data input { background: var(--fundo); color: var(--texto); border: 1px solid var(--borda);

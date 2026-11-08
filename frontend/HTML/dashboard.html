@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Dashboards por localidade da Estação Ambiental IoT.">
   <title>Dashboards — Estação Ambiental IoT</title>
-  <link rel="stylesheet" href="../CSS/painel.css?v=20261105v">
-  <link rel="stylesheet" href="../CSS/dashboard.css?v=20261107b">
-  <script type="module" src="../JAVA%20SCRIPT/dashboard.js?v=20261107c"></script>
+  <link rel="stylesheet" href="../CSS/painel.css?v=20261108h">
+  <link rel="stylesheet" href="../CSS/dashboard.css?v=20261108h">
+  <script type="module" src="../JAVA%20SCRIPT/dashboard.js?v=20261108c"></script>
 </head>
 <body class="pagina-dashboard">
   <a class="pular-conteudo" href="#conteudo-dashboard">Ir para o dashboard</a>
@@ -48,21 +48,25 @@
         <div class="titulo-secao"><h2 id="titulo-condicoes">Condições da localidade</h2>
           <p>Medições da estação selecionada</p></div>
         <dl class="indicadores indicadores-dashboard">
-          <div class="metrica">
+          <div class="metrica" data-campo="temperatura">
             <dt><span class="icone-metrica"><svg aria-hidden="true"><use href="../ASSETS/icones-dashboard.svg#temperature"></use></svg></span>Temperatura</dt>
             <dd class="medida"><span id="metrica-temperatura">—</span> <span class="unidade">°C</span></dd>
+            <dd class="dica-medicao" hidden></dd>
           </div>
-          <div class="metrica">
+          <div class="metrica" data-campo="umidade">
             <dt><span class="icone-metrica"><svg aria-hidden="true"><use href="../ASSETS/icones-dashboard.svg#humidity"></use></svg></span>Umidade relativa</dt>
             <dd class="medida"><span id="metrica-umidade">—</span> <span id="unidade-umidade" class="unidade"></span></dd>
+            <dd class="dica-medicao" hidden></dd>
+            <dd class="aviso-medicao" hidden></dd>
           </div>
           <div class="metrica">
             <dt><span class="icone-metrica"><svg aria-hidden="true"><use href="../ASSETS/icones-dashboard.svg#pressure"></use></svg></span>Pressão atmosférica</dt>
             <dd class="medida"><span id="metrica-pressao">—</span> <span class="unidade">hPa</span></dd>
           </div>
-          <div class="metrica">
+          <div class="metrica" data-campo="qualidade-ar">
             <dt><span class="icone-metrica"><svg aria-hidden="true"><use href="../ASSETS/icones-dashboard.svg#air"></use></svg></span>Qualidade do ar</dt>
             <dd class="medida"><span id="metrica-ar">—</span> <span class="unidade">%</span></dd>
+            <dd class="aviso-medicao" hidden></dd>
           </div>
           <div class="metrica">
             <dt><span class="icone-metrica"><svg aria-hidden="true"><use href="../ASSETS/icones-dashboard.svg#light"></use></svg></span>Luminosidade</dt>

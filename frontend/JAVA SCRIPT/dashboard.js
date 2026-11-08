@@ -3,7 +3,7 @@ import { consultarEstacao } from './consulta-estacao.js?v=20261105u';
 import { estadoDaFalha, estados } from './estados.js?v=20261105v';
 import { INTERVALO_ATUALIZACAO_MS } from './configuracao-api.js';
 import { politicaInicialDeLeitura } from './leitura-compartilhada.js?v=20261105u';
-import { elemento, escrever, mostrarSituacao, mostrarLeitura, mostrarHistorico, mostrarTabela } from './dashboard-interface.js?v=20261107c';
+import { elemento, escrever, mostrarSituacao, mostrarLeitura, mostrarHistorico, mostrarTabela } from './dashboard-interface.js?v=20261108c';
 
 let local, consulta, timer;
 let registros = [];
