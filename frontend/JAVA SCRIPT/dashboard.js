@@ -1,4 +1,6 @@
-import { catalogoEstacoes as localidades, moverSelecao } from './estacoes.js?v=20261107c';
+import { moverSelecao } from './estacoes.js?v=20261108b';
+import { obterEstacoes } from './api.js?v=20261108a';
+import { normalizarEstacoes } from './estacoes.js?v=20261108b';
 import { consultarEstacao } from './consulta-estacao.js?v=20261105u';
 import { estadoDaFalha, estados } from './estados.js?v=20261105v';
 import { INTERVALO_ATUALIZACAO_MS } from './configuracao-api.js';
@@ -6,8 +8,10 @@ import { politicaInicialDeLeitura } from './leitura-compartilhada.js?v=20261105u
 import { elemento, escrever, mostrarSituacao, mostrarLeitura, mostrarHistorico, mostrarTabela } from './dashboard-interface.js?v=20261108c';
 
 let local, consulta, timer;
+let localidadesDashboard = [];
 let registros = [];
 let paginaMedicoes = 1;
+let erroAoCarregarEstacao = null;
 const hoje = () => new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Sao_Paulo' }).format(new Date());
 function contexto() {
   return { nome: local?.nome || 'Localidade', data: elemento('data-historico').value, pagina: paginaMedicoes };
@@ -20,25 +24,32 @@ function limparDados() {
 }
 function carregarEndereco() {
   const params = new URLSearchParams(location.search);
-  local = localidades.find(item => item.id === (params.get('local') || 'sorocaba'));
+  const estacaoId = params.get('estacao');
+  local = estacaoId
+    ? localidadesDashboard.find(item => item.id === estacaoId)
+    : localidadesDashboard[0] || null;
   elemento('data-historico').value = params.get('data') || hoje();
   if (!elemento('data-historico').value) elemento('data-historico').value = hoje();
   atualizarSelecao();
 }
 function atualizarEndereco() {
   const url = new URL(location.href);
-  url.searchParams.set('local', local.id);
+  url.searchParams.set('estacao', local.id);
+  url.searchParams.delete('local');
   url.searchParams.set('data', elemento('data-historico').value);
   url.searchParams.delete('periodo');
   history.pushState(null, '', url);
 }
 function atualizarSelecao() {
+  const indice = localidadesDashboard.findIndex(item => item.id === local?.id);
   document.querySelectorAll('[role="tab"]').forEach(aba => {
     const ativa = aba.dataset.local === local?.id;
     aba.setAttribute('aria-selected', String(ativa));
-    aba.tabIndex = ativa || (!local && aba.dataset.local === localidades[0].id) ? 0 : -1;
+    aba.tabIndex = ativa ? 0 : -1;
   });
-  escrever('nome-local', local ? `${local.nome} — ${local.uf}` : 'Localidade não encontrada');
+  elemento('local-anterior').disabled = indice <= 0;
+  elemento('local-proximo').disabled = indice < 0 || indice >= localidadesDashboard.length - 1;
+  escrever('nome-local', local ? local.nome : 'Estação indisponível');
   document.title = `${local?.nome || 'Localidade'} — AERIS`;
   elemento('dashboard').setAttribute('aria-labelledby', local ? `aba-${local.id}` : 'titulo-dashboard');
   requestAnimationFrame(revelarAbaAtiva);
@@ -80,7 +91,8 @@ function prepararConsulta() {
   if (!local || !local.apiId) {
     mostrarHistorico([], { ...contexto(), situacao: 'unconfigured' });
     mostrarSituacao(local ? { tipo: 'empty' } : { tipo: 'error',
-      titulo: 'Localidade não encontrada', texto: 'Selecione uma das cidades disponíveis para continuar.' });
+      titulo: erroAoCarregarEstacao ? 'Estação indisponível' : 'Localidade não encontrada',
+      texto: erroAoCarregarEstacao?.message || 'Selecione uma das cidades disponíveis para continuar.' });
     elemento('recarregar').disabled = true;
     return null;
   }
@@ -104,16 +116,19 @@ async function atualizarDados(politica = 'reutilizar') {
   } finally { finalizarConsulta(controle); }
 }
 function selecionarLocal(id) {
-  cancelarConsulta(); local = localidades.find(item => item.id === id);
+  const proxima = localidadesDashboard.find(item => item.id === id);
+  if (!proxima) return;
+  cancelarConsulta(); local = proxima;
   atualizarSelecao(); atualizarEndereco(); atualizarDados();
   revelarAbaAtiva();
 }
-function navegar(deslocamento) { selecionarLocal(moverSelecao(localidades, local?.id, deslocamento)); }
+function navegar(deslocamento) { selecionarLocal(moverSelecao(localidadesDashboard, local?.id, deslocamento)); }
 function teclado(evento) {
+  if (!localidadesDashboard.length) return;
   const destinos = { ArrowRight: 1, ArrowLeft: -1 };
   if (evento.key in destinos) navegar(destinos[evento.key]);
-  else if (evento.key === 'Home') selecionarLocal(localidades[0].id);
-  else if (evento.key === 'End') selecionarLocal(localidades.at(-1).id);
+  else if (evento.key === 'Home') selecionarLocal(localidadesDashboard[0].id);
+  else if (evento.key === 'End') selecionarLocal(localidadesDashboard.at(-1).id);
   else return;
   evento.preventDefault(); elemento(`aba-${local.id}`).focus();
 }
@@ -127,7 +142,7 @@ function paginarTabela(deslocamento) {
   paginaMedicoes = mostrarTabela(registros, paginaMedicoes + deslocamento);
 }
 function criarAbas() {
-  document.querySelector('.abas-locais').replaceChildren(...localidades.map(item => {
+  document.querySelector('.abas-locais').replaceChildren(...localidadesDashboard.map(item => {
     const aba = document.createElement('button');
     aba.type = 'button'; aba.id = `aba-${item.id}`; aba.dataset.local = item.id;
     aba.setAttribute('role', 'tab'); aba.setAttribute('aria-controls', 'dashboard');
@@ -144,10 +159,42 @@ function conectarControles() {
   elemento('recarregar').addEventListener('click', () => atualizarDados('atualizar'));
   elemento('medicoes-anterior').addEventListener('click', () => paginarTabela(-1));
   elemento('medicoes-proxima').addEventListener('click', () => paginarTabela(1));
-  document.querySelectorAll('button[disabled]').forEach(botao => { botao.disabled = false; });
 }
 window.addEventListener('popstate', () => { cancelarConsulta(); carregarEndereco(); atualizarDados(); });
 window.addEventListener('pagehide', cancelarConsulta);
 window.addEventListener('pageshow', evento => { if (evento.persisted) atualizarDados(); });
-criarAbas(); carregarEndereco(); conectarControles(); atualizarDados(politicaInicialDeLeitura());
-new ResizeObserver(revelarAbaAtiva).observe(document.querySelector('.abas-locais'));
+async function iniciar() {
+  mostrarSituacao({ tipo: 'loading' });
+  try {
+    localidadesDashboard = normalizarEstacoes(await obterEstacoes());
+    const estacaoSolicitada = new URLSearchParams(location.search).get('estacao');
+    if (estacaoSolicitada && !localidadesDashboard.some(item => item.id === estacaoSolicitada)) {
+      erroAoCarregarEstacao = new Error('A estação solicitada não está disponível na API.');
+    }
+    criarAbas();
+    carregarEndereco();
+    conectarControles();
+    if (!localidadesDashboard.length) {
+      mostrarSituacao({ tipo: 'empty', titulo: 'Nenhuma estação disponível',
+        texto: 'Não há estações cadastradas para exibir neste momento.' });
+      mostrarHistorico([], { ...contexto(), situacao: 'empty' });
+      elemento('recarregar').disabled = true;
+    } else if (erroAoCarregarEstacao) {
+      mostrarSituacao({ tipo: 'error', titulo: 'Estação indisponível', texto: erroAoCarregarEstacao.message });
+      mostrarHistorico([], { ...contexto(), situacao: 'error' });
+    } else {
+      atualizarDados(politicaInicialDeLeitura());
+    }
+  } catch (erro) {
+    erroAoCarregarEstacao = erro;
+    criarAbas();
+    carregarEndereco();
+    conectarControles();
+    mostrarSituacao({ tipo: 'error', titulo: 'Estações indisponíveis', texto: erro.message });
+    mostrarHistorico([], { ...contexto(), situacao: 'error' });
+    elemento('recarregar').disabled = true;
+  }
+  new ResizeObserver(revelarAbaAtiva).observe(document.querySelector('.abas-locais'));
+}
+
+iniciar();

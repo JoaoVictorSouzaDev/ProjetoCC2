@@ -1,17 +1,15 @@
-import { criarCartoes } from './cartoes.js?v=20261108b';
-import { localidades, filtrarLocalidades } from './dados-demonstrativos.js?v=20261105u';
-
-import { iniciarUmidadeCartoes } from './umidade-cartoes.js?v=20261108c';
-
-const dashboardPorLocal = Object.fromEntries(localidades.map(local => [local.id, local.rota]));
+import { criarCartoes, iniciarLeiturasCartoes, mostrarEstadoCartoes } from './cartoes.js?v=20261108g';
+import { obterEstacoes } from './api.js?v=20261108a';
+import { normalizarEstacoes } from './estacoes.js?v=20261108b';
 
 const lista = document.querySelector('#lista-localidades');
 const carrossel = document.querySelector('.carrossel');
 const paginacao = document.querySelector('.paginacao');
 const busca = document.querySelector('#busca');
 const movimentoReduzido = matchMedia('(prefers-reduced-motion: reduce)');
-let disponiveis = [...localidades];
-let selecionada = localidades.find(local => local.id === 'sorocaba')?.id || localidades[0]?.id;
+let localidades = [];
+let disponiveis = [];
+let selecionada = null;
 let inicioGesto = null;
 let bloquearClique = false;
 let quadroCentralizacao = 0;
@@ -22,15 +20,14 @@ function escrever(id, texto) {
 }
 
 function atualizarLocalidade(local) {
-  document.getElementById('link-dashboard').href = dashboardPorLocal[local.id];
-  escrever('anuncio-localidade', `${local.nome} selecionada. Temperatura e condições ilustrativas; umidade da estação quando disponível.`);
+  escrever('anuncio-localidade', `${local.nome} selecionada.`);
 }
 
 function atualizarCartoes() {
   lista.querySelectorAll('[data-localidade]').forEach(cartao => {
     const ativo = cartao.dataset.localidade === selecionada;
     cartao.classList.toggle('selecionada', ativo);
-    cartao.querySelector('a').setAttribute('aria-current', String(ativo));
+    cartao.querySelector('a').setAttribute('aria-current', ativo ? 'true' : 'false');
   });
   paginacao.querySelectorAll('button').forEach(botao => {
     botao.setAttribute('aria-pressed', String(botao.dataset.selecionar === selecionada));
@@ -117,15 +114,10 @@ function criarPaginacao() {
   }));
 }
 
-function abrirDashboard(id) {
-  const destino = dashboardPorLocal[id];
-  if (destino) location.assign(destino);
-}
-
 function abrirLocalidade(evento) {
-  if (evento.target.closest('a')) return;
+  if (evento.target.closest('a[href]')) return;
   const cartao = evento.target.closest('[data-localidade]');
-  if (cartao) return abrirDashboard(cartao.dataset.localidade);
+  if (cartao) return location.assign(cartao.dataset.dashboardUrl);
   const indicador = evento.target.closest('[data-selecionar]');
   if (indicador) selecionar(indicador.dataset.selecionar);
 }
@@ -156,16 +148,23 @@ function navegarTeclado(evento) {
   destino?.focus({ preventScroll: true });
 }
 
+function normalizarTexto(texto) {
+  return texto.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+}
+
 function filtrar() {
-  disponiveis = filtrarLocalidades(busca.value);
+  const termo = normalizarTexto(busca.value);
+  disponiveis = localidades.filter(local => normalizarTexto(
+    `${local.id} ${local.nome} ${local.latitude} ${local.longitude} ${local.status}`,
+  ).includes(termo));
   carrossel.hidden = !disponiveis.length;
   paginacao.hidden = !disponiveis.length;
   lista.querySelectorAll('[data-localidade]').forEach(cartao => {
     cartao.hidden = !disponiveis.some(local => local.id === cartao.dataset.localidade);
   });
   criarPaginacao();
-  escrever('contagem-localidades', `${disponiveis.length} localidades · clima ilustrativo`);
-  escrever('resultado-busca', disponiveis.length ? '' : 'Nenhuma cidade encontrada. Tente buscar outra localidade.');
+  escrever('contagem-localidades', `${disponiveis.length} estações`);
+  escrever('resultado-busca', disponiveis.length ? '' : 'Nenhuma estação encontrada. Tente buscar outra.');
   if (!disponiveis.some(local => local.id === selecionada)) selecionar(disponiveis[0]?.id);
   atualizarCartoes();
   atualizarSetas();
@@ -263,21 +262,39 @@ function conectarControles() {
   movimentoReduzido.addEventListener('change', () => centralizar('imediato'));
 }
 
-function iniciar() {
-  criarCartoes();
-  iniciarUmidadeCartoes();
-  escrever('contagem-localidades', `${localidades.length} localidades`);
-  document.querySelectorAll('[data-selecionar], #busca').forEach(item => { item.disabled = false; });
-  criarPaginacao();
-  atualizarLocalidade(localidades.find(local => local.id === selecionada));
-  atualizarSetas();
-  atualizarCartoes();
+async function iniciar() {
+  mostrarEstadoCartoes('Carregando estações…');
+  escrever('contagem-localidades', 'Carregando estações…');
   conectarControles();
   conectarGestos();
   new ResizeObserver(recalcularLargura).observe(carrossel);
   document.fonts.ready.then(() => centralizar('imediato'));
   atualizarNavegacao();
   centralizar('imediato');
+
+  try {
+    localidades = normalizarEstacoes(await obterEstacoes());
+    disponiveis = [...localidades];
+    if (localidades.length) {
+      criarCartoes(localidades);
+      iniciarLeiturasCartoes(localidades);
+      selecionada = localidades[0].id;
+      criarPaginacao();
+      document.querySelectorAll('[data-selecionar], #busca').forEach(item => { item.disabled = false; });
+      atualizarLocalidade(localidades[0]);
+      atualizarCartoes();
+      centralizar('imediato');
+    } else {
+      mostrarEstadoCartoes('Nenhuma estação cadastrada na API.');
+      paginacao.hidden = true;
+    }
+    escrever('contagem-localidades', `${localidades.length} estações`);
+    atualizarSetas();
+  } catch (erro) {
+    mostrarEstadoCartoes(`Não foi possível carregar as estações: ${erro.message} Recarregue a página para tentar novamente.`, 'alert');
+    escrever('contagem-localidades', 'Estações indisponíveis');
+    atualizarSetas();
+  }
 }
 
 iniciar();

@@ -14,12 +14,15 @@ test('consulta somente o ID solicitado e envia a data exigida pelo contrato', as
     chamadas.push({ url, opcoes }); return new Response('[]');
   });
   await api.verificarApi();
+  await api.obterEstacoes();
   await api.obterLeituraRecente(17);
   await api.obterHistorico(29, { data: '2026-10-21' });
   assert.deepEqual(chamadas.map(item => item.url), ['https://api.example.test/',
+    'https://api.example.test/api/estacoes',
     'https://api.example.test/api/estacoes/17/recente',
     'https://api.example.test/api/estacoes/29/historico?data=2026-10-21']);
-  assert.ok(chamadas.every(item => !item.opcoes.method));
+  assert.equal(chamadas[1].opcoes.method, 'GET');
+  assert.ok(chamadas.every((item, indice) => indice === 1 || !item.opcoes.method));
 });
 test('POST envia somente os campos reais e valida medições', async t => {
   let corpo;

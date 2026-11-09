@@ -40,6 +40,9 @@ export async function requisitar(caminho, opcoes = {}) {
 }
 
 export function verificarApi(signal) { return requisitar('/', { signal }); }
+export function obterEstacoes(signal) {
+  return requisitar('/api/estacoes', { method: 'GET', signal });
+}
 export function validarData(data) {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(data)) throw new Error('Selecione uma data válida.');
   const instante = Date.parse(`${data}T00:00:00Z`);

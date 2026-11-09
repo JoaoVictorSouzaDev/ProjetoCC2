@@ -93,10 +93,12 @@ nav a:hover, nav a[aria-current] { background: var(--destaque-escuro); color: va
   transform: scale(.92); opacity: .75;
   transition: transform 320ms ease, opacity 320ms ease, border-color 320ms ease;
 }
-.localidade.selecionada article { transform: scale(1); opacity: 1; border-color: var(--destaque);
-  box-shadow: inset 0 0 0 1px var(--destaque); }
+.localidade.selecionada article { transform: scale(1); opacity: 1; border-color: var(--borda);
+  box-shadow: none; }
 .localidade article { cursor: pointer; }
 .localidade:focus-within article, .localidade:hover article { opacity: 1; }
+.estado-carrossel { flex: 0 0 100%; padding: 24px; text-align: center; }
+.estado-carrossel[role="alert"] { color: var(--erro, #b42318); }
 .clima {
   position: relative; isolation: isolate; overflow: hidden; border-radius: 21px 21px 0 0;
   display: flex; flex-direction: column; justify-content: space-between; gap: 16px;
@@ -115,6 +117,7 @@ nav a:hover, nav a[aria-current] { background: var(--destaque-escuro); color: va
 .identificacao-localidade h3 { font-size: 24px; }
 .estado { font-size: 12px; margin-top: 2px; color: var(--foto-texto); }
 .detalhes-localidade { display: flex; flex: 1; flex-direction: column; gap: 16px; padding: 20px 24px 24px; }
+.pagina-index .detalhes-localidade { gap: 36px; }
 .resumo-localidade { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
 .resumo-localidade div { min-width: 0; background: var(--superficie-interna); border-radius: 8px; padding: 8px 10px; }
 .resumo-localidade [data-severidade], .indicadores-dashboard .metrica[data-severidade] {
@@ -135,18 +138,25 @@ nav a:hover, nav a[aria-current] { background: var(--destaque-escuro); color: va
   color: light-dark(#8f2020, #ffd1d1);
 }
 .resumo-localidade dt { font-size: 11px; color: var(--secundario); overflow-wrap: anywhere; }
+.resumo-localidade dt .icone { width: 14px; height: 14px; margin-right: 4px; vertical-align: -3px; }
 .resumo-localidade dd { font-size: 14px; overflow-wrap: anywhere; }
 .resumo-localidade .aviso-medicao { font-size: 10px; }
+.pagina-index .resumo-localidade .aviso-medicao { font-size: 10px; line-height: 1.35; }
 .resumo-localidade [data-campo="qualidade-ar"] .aviso-medicao { font-size: 10px; }
+.condicoes-cartao [data-situacao] { min-height: 1.25em; }
+.condicoes-cartao [data-situacao][data-estado="offline"],
+.condicoes-cartao [data-situacao][data-estado="error"] { color: #ffd1d1; }
+.condicoes-cartao [data-situacao][data-estado="stale"] { color: #ffe6a3; }
+.origem-medicao[data-horario] { margin-top: auto; font-size: 11px; color: var(--secundario); }
 .indicadores-dashboard [data-campo="umidade"] .aviso-medicao { font-size: 20px; }
 .indicadores-dashboard [data-campo="qualidade-ar"] .aviso-medicao { font-size: 20px; }
 @media (max-width: 360px) {
   .resumo-localidade { grid-template-columns: minmax(0, 1fr); }
 }
 .selecionar { display: flex; align-items: center; justify-content: center; gap: 4px; width: 100%; min-height: 44px;
-  border: 1px solid var(--borda); border-radius: 8px; background: var(--superficie);
-  padding: 8px; font-size: 12px; margin-top: auto; }
-.selecionada .selecionar { background: var(--destaque); color: var(--sobre-destaque); border-color: var(--destaque); font-weight: 650; }
+  border: 1px solid var(--borda); border-radius: 8px; background: transparent; color: var(--texto);
+  padding: 10px 14px; font: inherit; font-size: 12px; margin-top: auto; cursor: pointer; }
+.pagina-index .selecionar { margin-top: 8px; }
 .selecionar:hover { border-color: var(--destaque); }
 .lista-localidades.sem-transicao, .lista-localidades.sem-transicao * { transition: none; }
 .seta { position: absolute; top: 50%; transform: translateY(-50%); z-index: 2; width: 48px; height: 48px;

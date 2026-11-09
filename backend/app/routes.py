@@ -67,3 +67,19 @@ def obter_historico_por_data(estacao_id: int, data: str = Query(..., description
     conn.close()
 
     return linhas
+
+@router.get("/estacoes")
+def listar_estacoes():
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    cursor.execute("""
+        SELECT id, nome, latitude, longitude, status, criado
+        FROM estacoes
+    """)
+    
+    linhas = cursor.fetchall()
+    cursor.close()
+    conn.close()
+
+    return linhas

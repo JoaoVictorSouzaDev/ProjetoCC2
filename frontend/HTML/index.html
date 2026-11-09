@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Painel demonstrativo do projeto acadêmico Estação Ambiental IoT.">
   <title>Estação Ambiental IoT — Painel meteorológico</title>
-  <link rel="stylesheet" href="../CSS/painel.css?v=20261108f">
-  <script type="module" src="../JAVA%20SCRIPT/painel.js?v=20261108d"></script>
+  <link rel="stylesheet" href="../CSS/painel.css?v=20261108j">
+  <script type="module" src="../JAVA%20SCRIPT/painel.js?v=20261108f"></script>
 </head>
 <body class="pagina-index">
   <a class="pular-conteudo" href="#conteudo-principal">Ir para o conteúdo principal</a>
@@ -22,7 +22,7 @@
       <section id="apresentacao" class="apresentacao" aria-labelledby="titulo-apresentacao">
         <div>
           <h1 id="titulo-apresentacao">Explore o clima em uma região</h1>
-          <p>Selecione uma cidade para conferir as condições do ambiente e os dados da estação.</p>
+          <p>Selecione uma estação para conferir sua localização e seu status.</p>
         </div>
         <form role="search" id="busca-localidades">
           <label class="sr-only" for="busca">Buscar cidade ou estação</label>
@@ -33,7 +33,7 @@
       <section id="localidades" aria-labelledby="titulo-localidades">
         <div class="titulo-secao">
           <h2 id="titulo-localidades">Estações Disponíveis: </h2>
-          <p id="contagem-localidades">Localidades · dados da API</p>
+          <p id="contagem-localidades">Carregando estações da API…</p>
         </div>
         <div class="carrossel" role="region" aria-roledescription="carrossel" aria-label="Localidades">
           <button class="seta anterior" type="button" aria-label="Localidade anterior"

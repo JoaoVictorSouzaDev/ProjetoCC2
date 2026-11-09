@@ -29,7 +29,7 @@ def init_db():
             latitude DOUBLE NOT NULL,
             longitude DOUBLE NOT NULL,
             status VARCHAR(20) NOT NULL DEFAULT 'ativo',
-            criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            criado TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         ) ENGINE=InnoDB;
         """)
 

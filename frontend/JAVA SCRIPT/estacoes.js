@@ -12,6 +12,30 @@ export const catalogoEstacoes = Object.freeze([
 })));
 export const estacoes = Object.freeze(Object.fromEntries(catalogoEstacoes.map(item => [item.id, item.apiId])));
 
+const imagemGenerica = '../ASSETS/images/locations/sao-paulo.webp';
+
+export function normalizarEstacoes(dados) {
+  if (!Array.isArray(dados)) throw new Error('A API retornou uma lista de estações inválida.');
+  return dados.map(estacao => {
+    if (!Number.isSafeInteger(estacao?.id) || estacao.id < 1 ||
+        typeof estacao.nome !== 'string' || !estacao.nome.trim() ||
+        !Number.isFinite(estacao.latitude) || !Number.isFinite(estacao.longitude) ||
+        typeof estacao.status !== 'string') {
+      throw new Error('A API retornou dados inválidos para uma estação.');
+    }
+    const nome = estacao.nome.trim();
+    return Object.freeze({
+      id: String(estacao.id),
+      nome,
+      apiId: estacao.id,
+      latitude: estacao.latitude,
+      longitude: estacao.longitude,
+      status: estacao.status,
+      imagem: /UNIP/i.test(nome) ? '../ASSETS/images/locations/UNIP1.jpg' : imagemGenerica,
+    });
+  });
+}
+
 export function moverSelecao(lista, atual, deslocamento) {
   if (!lista.length) return null;
   const indice = lista.findIndex(local => local.id === atual);
