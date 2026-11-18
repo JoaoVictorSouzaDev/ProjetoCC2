@@ -8,7 +8,7 @@
 // CONFIGURAÇÕES DE REDE E SERVIDOR
 const char* WIFI_SSID = "João_Souza";
 const char* WIFI_PASSWORD = "121044Luthia@";
-const char* API_URL = "http://192.168.1.104:8000/api/leituras";
+const char* API_URL = "https://projetocc2-production.up.railway.app/api/leituras";
 
 // CONFIGURAÇÕES DA ESTAÇÃO
 const int ESTACAO_ID = 1;
