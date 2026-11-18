@@ -144,6 +144,16 @@
 
 .indicadores-dashboard .detalhes-precipitacao { display: grid; gap: 4px; margin-top: 12px;
   color: var(--secundario); font-size: 11px; font-weight: 400; line-height: 1.4; overflow-wrap: anywhere; }
+#metrica-precipitacao[data-intensidade="limpa"],
+#situacao-precipitacao[data-intensidade="limpa"] { color: light-dark(#267447, #81d6a0); }
+#metrica-precipitacao[data-intensidade="leve"],
+#situacao-precipitacao[data-intensidade="leve"] { color: light-dark(#1769aa, #83caff); }
+#metrica-precipitacao[data-intensidade="moderada"],
+#situacao-precipitacao[data-intensidade="moderada"] { color: light-dark(#846000, #f3d567); }
+#metrica-precipitacao[data-intensidade="forte"],
+#situacao-precipitacao[data-intensidade="forte"] { color: light-dark(#a84e00, #ffad70); }
+#metrica-precipitacao[data-intensidade="intensa"],
+#situacao-precipitacao[data-intensidade="intensa"] { color: light-dark(#a92331, #ff8994); }
 @media (min-width: 761px) and (max-width: 1000px) {
   .indicadores-dashboard .metrica { flex-basis: calc((100% - 28px) / 2); }
 }

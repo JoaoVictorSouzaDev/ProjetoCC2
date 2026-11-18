@@ -2,7 +2,7 @@ import { mostrarEstado } from './estados-interface.js?v=20261107c';
 import { icone } from './icones.js?v=20261105u';
 import { campos, numero, formatarHorario, classificar } from './leituras.js?v=20261108b';
 import { desenharGrafico } from './grafico-temperatura.js?v=20261105u';
-import { apresentarPrecipitacao } from './precipitacao.js?v=20261105u';
+import { apresentarPrecipitacao } from './precipitacao.js?v=20261117a';
 import { apresentarUmidade } from './umidade.js?v=20261105u';
 import { mostrarAvisoMedicao, mostrarDicaMedicao } from './avisos-interface.js?v=20261108c';
 let precipitacaoAtual = null;
@@ -22,6 +22,11 @@ function mostrarPrecipitacao(estado = 'success') {
   escrever('periodo-precipitacao', dados.periodo);
   escrever('horario-precipitacao', `Leitura: ${dados.horario}`);
   escrever('situacao-precipitacao', dados.situacao);
+  for (const id of ['metrica-precipitacao', 'situacao-precipitacao']) {
+    const alvo = elemento(id);
+    if (dados.intensidade) alvo.dataset.intensidade = dados.intensidade;
+    else delete alvo.dataset.intensidade;
+  }
 }
 export function mostrarSituacao(estado) {
   mostrarPrecipitacao(estado.tipo);

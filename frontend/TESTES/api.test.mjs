@@ -24,6 +24,11 @@ test('consulta somente o ID solicitado e envia a data exigida pelo contrato', as
   assert.equal(chamadas[1].opcoes.method, 'GET');
   assert.ok(chamadas.every((item, indice) => indice === 1 || !item.opcoes.method));
 });
+test('leitura recente mantém o campo pluviometria recebido da API', async t => {
+  const leitura = { temperatura: 22, pluviometria: 1.28 };
+  t.mock.method(globalThis, 'fetch', async () => new Response(JSON.stringify(leitura)));
+  assert.deepEqual(await api.obterLeituraRecente(17), leitura);
+});
 test('POST envia somente os campos reais e valida medições', async t => {
   let corpo;
   t.mock.method(globalThis, 'fetch', async (_, opcoes) => {

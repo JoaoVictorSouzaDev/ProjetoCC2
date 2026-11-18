@@ -12,12 +12,16 @@ const char* API_URL = "http://192.168.1.104:8000/api/leituras";
 
 // CONFIGURAÇÕES DA ESTAÇÃO
 const int ESTACAO_ID = 1;
-const unsigned long INTERVALO_LEITURA_MS = 300000; // Alterado para 5 minutos
+const unsigned long INTERVALO_LEITURA_MS = 10000; // 1 minuto para testes
 
 // MAPEAMENTO DE PINOS E SENSORES
 #define PIN_DHT22 4
-#define PIN_MQ135 36  // ADC1 (VP)
-#define PIN_LDR 34  // ADC1
+#define PIN_MQ135 36       // ADC1 (VP)
+#define PIN_LDR 34         // ADC1
+#define PIN_PLUVIOMETRO 25 // Pino digital para o Sensor Hall do Pluviômetro
+
+// CALIBRAÇÃO DO PLUVIÔMETRO (Baseado no seu YAML do ESPHome)
+const float RAIN_MM_PER_TIP = 0.64; // Cada tombo da báscula = 0.64 mm de chuva
 
 #define DHTTYPE DHT22
 DHT dht(PIN_DHT22, DHTTYPE);
@@ -25,6 +29,20 @@ Adafruit_BMP280 bmp;
 
 // Variáveis de Controle de Tempo
 unsigned long ultimaLeituraMs = 0;
+
+// Variáveis do Pluviômetro (volatile é obrigatório para interrupções)
+volatile int contadorTombos = 0;
+volatile unsigned long ultimoPulsoPluviometro = 0;
+
+// FUNÇÃO DE INTERRUPÇÃO DO PLUVIÔMETRO (Roda a cada passagem do ímã)
+void IRAM_ATTR detectarTomboChuva() {
+  unsigned long tempoAtual = millis();
+  // Debounce de 200ms (evita contar ruído ou vibração da báscula)
+  if (tempoAtual - ultimoPulsoPluviometro > 200) {
+    contadorTombos++;
+    ultimoPulsoPluviometro = tempoAtual;
+  }
+}
 
 // Garante que o Wi-Fi permaneça conectado
 void conectarWiFi() {
@@ -49,7 +67,7 @@ void conectarWiFi() {
   }
 }
 
-// Média amostral para leitura analógica estável (remove ruído de leitura)
+// Média amostral para leitura analógica estável
 int lerAnalogicoEstavel(uint8_t pino, int amostras = 10) {
   long soma = 0;
   for (int i = 0; i < amostras; i++) {
@@ -59,18 +77,18 @@ int lerAnalogicoEstavel(uint8_t pino, int amostras = 10) {
   return (int)(soma / amostras);
 }
 
-// Envio dos dados via POST para a API FastAPI
-bool enviarPayloadHTTP(float temp, float umid, float pressao, float ar, int luz) {
+// Envio dos dados via POST para a API FastAPI (Agora incluindo 'pluviometria')
+bool enviarPayloadHTTP(float temp, float umid, float pressao, float ar, int luz, float pluviometria) {
   if (WiFi.status() != WL_CONNECTED) return false;
 
   HTTPClient http;
   http.begin(API_URL);
   http.addHeader("Content-Type", "application/json");
 
-  char jsonPayload[256];
+  char jsonPayload[350];
   snprintf(jsonPayload, sizeof(jsonPayload),
-    "{\"estacao_id\":%d,\"temperatura\":%.2f,\"umidade\":%.2f,\"pressao\":%.2f,\"qualidade_ar\":%.2f,\"luminosidade\":%d}",
-    ESTACAO_ID, temp, umid, pressao, ar, luz
+    "{\"estacao_id\":%d,\"temperatura\":%.2f,\"umidade\":%.2f,\"pressao\":%.2f,\"qualidade_ar\":%.2f,\"luminosidade\":%d,\"pluviometria\":%.2f}",
+    ESTACAO_ID, temp, umid, pressao, ar, luz, pluviometria
   );
 
   int httpCode = http.POST(String(jsonPayload));
@@ -85,12 +103,17 @@ bool enviarPayloadHTTP(float temp, float umid, float pressao, float ar, int luz)
   }
 }
 
-// SETUP
+// SETUP'
 void setup() {
   Serial.begin(115200);
   Serial.println("\nInicializando Estação Meteorológica IoT...");
 
   analogReadResolution(12);
+
+  // Inicialização do Pluviômetro (Sensor Hall)
+  pinMode(PIN_PLUVIOMETRO, INPUT_PULLUP);
+  attachInterrupt(digitalPinToInterrupt(PIN_PLUVIOMETRO), detectarTomboChuva, FALLING);
+  Serial.println("✅ Pluviômetro (Sensor Hall) Inicializado no GPIO 25.");
 
   // Inicialização do DHT22
   dht.begin();
@@ -114,34 +137,46 @@ void setup() {
 
 // LOOP PRINCIPAL (Não-bloqueante)
 void loop() {
-  // Garante reconexão Wi-Fi contínua
   conectarWiFi();
 
-  // Executa a leitura apenas quando o intervalo de 5 segundos é atingido
   if (millis() - ultimaLeituraMs >= INTERVALO_LEITURA_MS) {
     ultimaLeituraMs = millis();
 
-    // 1. Leituras dos Sensores
-    float temperatura = 0.0; //dht.readTemperature();
-    float umidade = 0.0; //dht.readHumidity();
-    float pressao = bmp.readPressure() / 100.0F; // Convertido para hPa
+    // 1. Leituras dos Sensores Climáticos
+    float temperatura = dht.readTemperature();
+    float umidade = dht.readHumidity();
+
+    // Proteção contra falha ou desconexão do DHT22 (evita o bug de 125°C / NaN)
+    if (isnan(temperatura) || isnan(umidade) || temperatura >= 120.0) {
+      Serial.println("⚠️ Aviso: Falha na leitura do DHT22!");
+      temperatura = 0.0;
+      umidade = 0.0;
+    }
+
+    float pressao = bmp.readPressure() / 100.0F;
     
-    // Leitura analógica bruta convertida para Porcentagem (0 a 100%)
     int brutoAr = lerAnalogicoEstavel(PIN_MQ135);
-    float qualidadeAr = (float)map(brutoAr, 0, 4095, 0, 100); // 0% a 100% de poluição/gás
+    float qualidadeAr = (float)map(brutoAr, 0, 4095, 0, 100);
 
     int brutoLuz = lerAnalogicoEstavel(PIN_LDR);
-    // Considerando o divisor de tensão onde mais luz = menor valor ou maior valor,
-    // aqui mapeamos invertido caso o escuro seja alto, ou direto (0 a 4095 para 0 a 100):
     int luminosidade = map(brutoLuz, 0, 4095, 0, 100); 
-luminosidade = constrain(luminosidade, 0, 100);
+    luminosidade = constrain(luminosidade, 0, 100);
 
-    // Monitoramento Local no Serial
+    // 2. Leitura e Cálculo do Pluviômetro (Volume acumulado no intervalo)
+    noInterrupts();
+    int tombosNoIntervalo = contadorTombos;
+    contadorTombos = 0; // Zera o contador para o próximo ciclo
+    interrupts();
+
+    float pluviometria = tombosNoIntervalo * RAIN_MM_PER_TIP;
+
+    // 3. Monitoramento Local no Serial
     Serial.println("--------------------------------------------------");
     Serial.printf("🌡️ Temp: %.2f °C | 💧 Umid: %.2f %%\n", temperatura, umidade);
     Serial.printf("🎈 Pressão: %.2f hPa | 🌬️ Ar: %.0f %% | ☀️ Luz: %d %%\n", pressao, qualidadeAr, luminosidade);
+    Serial.printf("🌧️ Pluviometria: %.2f mm (%d tombos)\n", pluviometria, tombosNoIntervalo);
 
-    // Envio para o Banco via FastAPI
-    enviarPayloadHTTP(temperatura, umidade, pressao, qualidadeAr, luminosidade);
+    // 4. Envio para o Banco via FastAPI
+    enviarPayloadHTTP(temperatura, umidade, pressao, qualidadeAr, luminosidade, pluviometria);
   }
 }

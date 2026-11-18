@@ -22,4 +22,5 @@ class Leitura(Base):
     pressao = Column(Float, nullable=False)
     qualidade_ar = Column(Float, nullable=False)
     luminosidade = Column(Integer, nullable=False)
+    pluviometria = Column(Float, nullable=True, default=0.0)
     data_hora = Column(TIMESTAMP, default=datetime.utcnow)

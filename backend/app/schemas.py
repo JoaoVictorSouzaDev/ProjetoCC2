@@ -5,11 +5,12 @@ from datetime import datetime
 # Schema para receber/validar os dados enviados pelo ESP32 (Leituras)
 class LeituraCreate(BaseModel):
     estacao_id: int = 1
-    temperatura: Optional[float] = 0.0  # Provisório
-    umidade: Optional[float] = 0.0      # Provisório
+    temperatura: Optional[float] = None
+    umidade: Optional[float] = None
     pressao: float
     qualidade_ar: float
     luminosidade: int
+    pluviometria: Optional[float] = 0.0
 
 # Schema para retornar os dados de leitura já salvos
 class LeituraResponse(LeituraCreate):

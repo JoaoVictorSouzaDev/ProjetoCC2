@@ -20,8 +20,11 @@ export function normalizarLeitura(item) {
     if (campo === 'umidade') return [campo, normalizarUmidade(valor)];
     return [campo, typeof valor === 'number' && Number.isFinite(valor) ? valor : null];
   }));
-  // Sem campo, unidade e período documentados: não inferir chuva a partir de outras medições.
-  return { ...valores, horario: normalizarHorario(item.data_hora), precipitacao: null };
+  const horario = normalizarHorario(item.data_hora);
+  const precipitacao = Number.isFinite(item.pluviometria) ? {
+    mm: item.pluviometria, periodo: 'intervalo da leitura', horario,
+  } : null;
+  return { ...valores, horario, precipitacao };
 }
 export function normalizarHistorico(dados) {
   if (dados === null) return [];

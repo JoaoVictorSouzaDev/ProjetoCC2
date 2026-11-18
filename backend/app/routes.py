@@ -9,25 +9,31 @@ def registrar_leitura(leitura: LeituraCreate):
     conn = get_db_connection()
     cursor = conn.cursor()
 
-
-    #Verificação Temperatura
-    if leitura.temperatura < -40 or leitura.temperatura > 80:
+    if leitura.temperatura is not None and (leitura.temperatura < -40 or leitura.temperatura > 80):
         cursor.close()
         conn.close()
         raise HTTPException(status_code=400, detail="Temperatura fora dos limites físicos aceitáveis.")
 
     query = """
-        INSERT INTO leituras (estacao_id, temperatura, umidade, pressao, qualidade_ar, luminosidade)
-        VALUES (%s, %s, %s, %s, %s, %s)
+        INSERT INTO leituras (estacao_id, temperatura, umidade, pressao, qualidade_ar, luminosidade, pluviometria)
+        VALUES (%s, %s, %s, %s, %s, %s, %s)
     """
-    values = (leitura.estacao_id, leitura.temperatura, leitura.umidade, leitura.pressao, leitura.qualidade_ar, leitura.luminosidade)
+    values = (
+        leitura.estacao_id, 
+        leitura.temperatura, 
+        leitura.umidade, 
+        leitura.pressao, 
+        leitura.qualidade_ar, 
+        leitura.luminosidade,
+        leitura.pluviometria  # <--- Nome ajustado
+    )
 
     cursor.execute(query, values)
     conn.commit()
     cursor.close()
     conn.close()
 
-    return {"status": "sucesso", "mensagem": "Leitura registrada no MySQL com sucesso."}
+    return {"status": "sucesso", "mensagem": "Leitura e pluviometria registradas no MySQL com sucesso."}
 
 @router.get("/estacoes/{estacao_id}/recente")
 def obter_leitura_recente(estacao_id: int):

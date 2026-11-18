@@ -33,12 +33,30 @@ test('distingue carregamento, falha, offline, vazio e desatualização', () => {
   assert.equal(apresentarPrecipitacao(amostra, 'stale').valor, '12,5');
   assert.match(apresentarPrecipitacao({ ...amostra, origem: 'demonstracao' }).situacao, /demonstrativos/);
 });
-test('mapeador não assume campo, período ou calibração de chuva no contrato atual', () => {
+test('mapeador lê pluviometria da API e deixa ausência explícita', () => {
   assert.equal(normalizarLeitura({ temperatura: 22, data_hora: amostra.horario }).precipitacao, null);
+  assert.equal(normalizarLeitura({ pluviometria: null }).precipitacao, null);
+  assert.deepEqual(normalizarLeitura({ pluviometria: 0 }).precipitacao, {
+    mm: 0, periodo: 'intervalo da leitura', horario: null,
+  });
 });
 
 test('precipitação pequena não é arredondada para zero e valor inválido é identificado', () => {
   assert.equal(apresentarPrecipitacao({ ...amostra, mm: 0.04 }).valor, '0,04');
   assert.match(apresentarPrecipitacao({ ...amostra, mm: '12' }).situacao, /inválida/);
   assert.match(apresentarPrecipitacao({ ...amostra, origem: 'demonstracao' }, 'stale').situacao, /demonstrativos/);
+});
+test('aumenta a classificação e a cor conforme o acumulado de chuva', () => {
+  assert.match(apresentarPrecipitacao({ ...amostra, mm: 0 }).situacao, /Céu limpo/);
+  assert.match(apresentarPrecipitacao({ ...amostra, mm: 2 }).situacao, /Céu limpo/);
+  assert.equal(apresentarPrecipitacao({ ...amostra, mm: 2.01 }).intensidade, 'leve');
+  assert.equal(apresentarPrecipitacao({ ...amostra, mm: 5 }).intensidade, 'leve');
+  assert.equal(apresentarPrecipitacao({ ...amostra, mm: 5.01 }).intensidade, 'moderada');
+  assert.equal(apresentarPrecipitacao({ ...amostra, mm: 10 }).intensidade, 'moderada');
+  assert.equal(apresentarPrecipitacao({ ...amostra, mm: 10.01 }).intensidade, 'forte');
+  assert.equal(apresentarPrecipitacao({ ...amostra, mm: 20 }).intensidade, 'forte');
+  assert.equal(apresentarPrecipitacao({ ...amostra, mm: 20.01 }).intensidade, 'intensa');
+  assert.match(apresentarPrecipitacao(null).situacao, /Pluviometria não informada pela API/);
+  assert.equal(apresentarPrecipitacao(null).intensidade, null);
+  assert.doesNotMatch(apresentarPrecipitacao(null, 'loading').situacao, /Pluviometria não informada pela API/);
 });
