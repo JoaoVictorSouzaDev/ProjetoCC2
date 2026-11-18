@@ -56,10 +56,10 @@ test('timeout e cancelamento encerram a requisição', async t => {
   const controle = new AbortController(); controle.abort();
   await assert.rejects(api.obterLeituraRecente(17, controle.signal), { name: 'AbortError' });
 });
-test('valores inválidos não viram zero ou NaN e datas sem fuso não são inventadas', () => {
+test('valores inválidos não viram zero ou NaN e timestamps sem fuso são tratados como UTC', () => {
   const leitura = normalizarLeitura({ temperatura: null, umidade: '65', qualidade_ar: 12, data_hora: '2026-10-21T10:00:00' });
   assert.equal(leitura.temperatura, null); assert.equal(leitura.umidade, null);
-  assert.equal(leitura.ar, 12); assert.equal(leitura.horario, null);
+  assert.equal(leitura.ar, 12); assert.equal(leitura.horario, '2026-10-21T10:00:00Z');
   assert.deepEqual(normalizarHistorico([]), []);
   assert.throws(() => normalizarHistorico({}), /lista/);
   assert.match(situacaoLeitura(normalizarLeitura({ data_hora: '2020-01-01T00:00:00Z' })), /desatualizados/);

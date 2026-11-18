@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta, time
 from fastapi import APIRouter, HTTPException, Query
 from app.database import get_db_connection
 from app.schemas import LeituraCreate
@@ -61,12 +62,22 @@ def obter_historico_por_data(estacao_id: int, data: str = Query(..., description
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
 
+    try:
+        dia_local = datetime.strptime(data, "%Y-%m-%d").date()
+    except ValueError:
+        cursor.close()
+        conn.close()
+        raise HTTPException(status_code=422, detail="Data inválida. Use o formato YYYY-MM-DD.")
+
+    inicio = datetime.combine(dia_local, time.min) + timedelta(hours=3)
+    fim = inicio + timedelta(days=1)
+
     cursor.execute("""
-        SELECT id, temperatura, umidade, pressao, qualidade_ar, luminosidade, data_hora
+        SELECT id, temperatura, umidade, pressao, qualidade_ar, luminosidade, pluviometria, data_hora
         FROM leituras
-        WHERE estacao_id = %s AND DATE(data_hora) = %s
+        WHERE estacao_id = %s AND data_hora >= %s AND data_hora < %s
         ORDER BY data_hora ASC
-    """, (estacao_id, data))
+    """, (estacao_id, inicio, fim))
 
     linhas = cursor.fetchall()
     cursor.close()

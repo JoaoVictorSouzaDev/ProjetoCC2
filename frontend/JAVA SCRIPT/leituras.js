@@ -1,4 +1,4 @@
-import { FUSO_LEITURAS, LIMITE_DESATUALIZACAO_MS } from './configuracao-api.js';
+import { LIMITE_DESATUALIZACAO_MS } from './configuracao-api.js';
 import { normalizarUmidade } from './umidade.js?v=20261105u';
 export const campos = ['temperatura', 'umidade', 'pressao', 'ar', 'luminosidade'];
 export const numero = valor => Number.isFinite(valor) ? valor.toLocaleString('pt-BR', { maximumFractionDigits: 1 }) : 'Indisponível';
@@ -8,7 +8,7 @@ function normalizarHorario(valor) {
   const data = horario.slice(0, 10);
   const dia = Date.parse(`${data}T00:00:00Z`);
   if (!Number.isFinite(dia) || new Date(dia).toISOString().slice(0, 10) !== data) return null;
-  if (!/(Z|[+-]\d{2}:\d{2})$/.test(horario)) horario = FUSO_LEITURAS ? horario + FUSO_LEITURAS : '';
+  if (!/(Z|[+-]\d{2}:\d{2})$/.test(horario)) horario = horario + 'Z';
   return Number.isFinite(Date.parse(horario)) ? horario : null;
 }
 export function normalizarLeitura(item) {
