@@ -1,5 +1,6 @@
 fastapi
 uvicorn
+mysql-connector-python
 pymysql
-requests
 pydantic
+requests
